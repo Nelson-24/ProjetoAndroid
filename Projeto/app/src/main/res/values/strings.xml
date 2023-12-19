@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Loja CRM</string>
+    <string name="artigos">Artigos</string>
+    <string name="login">Login</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="referencia">Referência</string>
+    <string name="preco">Preço</string>
+    <string name="stock">Stock</string>
+    <string name="descricao">Descricao</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="categoria">Id Categoria</string>
+</resources>
