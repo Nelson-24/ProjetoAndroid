@@ -26,7 +26,7 @@ public class SingletonGestorArtigos {
     private static SingletonGestorArtigos instance = null;
     private ArtigoBDHelper artigoBD=null;
     private static RequestQueue volleyQueue=null;
-    private static final String mUrlAPIArtigos="http://10.0.2.2/ProjetoPSI/Projeto/backend/web/api/artigos";
+    private static final String mUrlAPIArtigos="http://10.0.2.2/ProjetoPSI/Projeto/backend/web/api/artigos/json";
     private static final String mUrlAPILogin="http://10.0.2.2/ProjetoPSI/Projeto/backend/web/api/auth";
     private static final String TOKEN="pmtCFWGtJJKcXYtbWXWKI39N0ba7pYM2";
     private ArtigosListener artigosListener;
@@ -115,8 +115,8 @@ public class SingletonGestorArtigos {
                     params.put("descricao",artigo.getDescricao());
                     params.put("preco",artigo.getPreco()+"");
                     params.put("stock",artigo.getStock()+"");
-                    params.put("categoria_id",artigo.getIdCategoria());
-                    params.put("foto",artigo.getFoto());
+                    params.put("categoria_id",artigo.getIdCategoria()+"");
+//                    params.put("foto",artigo.getFoto());
                     return params;
                 }
             };
@@ -209,7 +209,8 @@ public class SingletonGestorArtigos {
                     params.put("descricao",artigo.getDescricao());
                     params.put("preco",artigo.getPreco()+"");
                     params.put("stock",artigo.getStock()+"");
-                    params.put("idCategoria",artigo.getIdCategoria());
+                    params.put("categoria_id",artigo.getIdCategoria()+"");
+//                    params.put("foto",artigo.getFoto());
                     return params;
                 }
             };

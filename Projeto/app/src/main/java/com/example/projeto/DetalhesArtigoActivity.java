@@ -23,7 +23,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 public class DetalhesArtigoActivity extends AppCompatActivity implements ArtigoListener{
 
     public static final String ID_ARTIGO="id";
-    public static final String DEFAULT_IMG = "http://amsi.dei.estg.ipleiria.pt/img/ipl_semfundo.png";
     private final int MIN_CHAR=3, MIN_NUMEROS=1;
     private EditText etReferencia, etPreco, etStock, etDescricao, etCategoria;
     private FloatingActionButton fabGuardar;
@@ -55,7 +54,7 @@ public class DetalhesArtigoActivity extends AppCompatActivity implements ArtigoL
                 finish();
         }
         else {
-            setTitle("Adicionar titulo");
+            setTitle("Adicionar Artigo");
             fabGuardar.setImageResource(R.drawable.ic_action_adicionar);
         }
 
@@ -67,15 +66,15 @@ public class DetalhesArtigoActivity extends AppCompatActivity implements ArtigoL
                         artigo.setReferencia(Integer.parseInt(etReferencia.getText().toString()));
                         artigo.setPreco(Integer.parseInt(etPreco.getText().toString()));
                         artigo.setStock(Integer.parseInt(etStock.getText().toString()));
+                        artigo.setIdCategoria(Integer.parseInt(etCategoria.getText().toString()));
                         artigo.setDescricao(etDescricao.getText().toString());
-                        artigo.setIdCategoria(etCategoria.getText().toString());
                         SingletonGestorArtigos.getInstance(getApplicationContext()).editarArtigoAPI(artigo,getApplicationContext());
                     }
                 }
                 else{ //artigo para criar
                     if (isArtigoValido()){
                         artigo=new Artigo(0, Integer.parseInt(etReferencia.getText().toString()), Integer.parseInt(etPreco.getText().toString()),
-                                Integer.parseInt(etStock.getText().toString()), etDescricao.getText().toString(), etCategoria.getText().toString(), DEFAULT_IMG);
+                                Integer.parseInt(etStock.getText().toString()), Integer.parseInt(etCategoria.getText().toString()), etDescricao.getText().toString());
                         SingletonGestorArtigos.getInstance(getApplicationContext()).adicionarArtigoAPI(artigo,getApplicationContext());
                     }
                 }
@@ -119,8 +118,8 @@ public class DetalhesArtigoActivity extends AppCompatActivity implements ArtigoL
         etReferencia.setText(artigo.getReferencia() + "");
         etPreco.setText(artigo.getPreco() + "");
         etStock.setText(artigo.getStock() + "");
+        etCategoria.setText(artigo.getIdCategoria() + "");
         etDescricao.setText(artigo.getDescricao());
-        etCategoria.setText(artigo.getIdCategoria());
         //imgFoto.setText(artigo.getFoto());
         Glide.with(getApplicationContext())
                 .load(artigo.getFoto())
@@ -140,11 +139,12 @@ public class DetalhesArtigoActivity extends AppCompatActivity implements ArtigoL
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId()==R.id.itemPesquisa){
+        if (item.getItemId()==R.id.itemRemover){
             dialogRemover();
         }
         return super.onOptionsItemSelected(item);
     }
+
 
     private void dialogRemover() {
         AlertDialog.Builder builder= new AlertDialog.Builder(this);

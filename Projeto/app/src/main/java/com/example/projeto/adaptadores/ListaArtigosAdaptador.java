@@ -42,30 +42,31 @@ public class ListaArtigosAdaptador extends BaseAdapter{
     }
 
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
+    public View getView(int position, View view, ViewGroup viewGroup) {
         if (inflator==null)
             inflator= (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if(view==null)
-            view=inflator.inflate(R.layout.fragment_lista_artigo, null);
+            view=inflator.inflate(R.layout.item_lista_artigo, null);
 
         ViewHolderLista viewHolder= (ViewHolderLista) view.getTag();
         if (viewHolder==null){
             viewHolder = new ViewHolderLista(view);
             view.setTag(viewHolder);
         }
-        viewHolder.update(artigos.get(i));
+        viewHolder.update(artigos.get(position));
 
         return view;
     }
 
     private class ViewHolderLista{
-        private TextView tvReferencia, tvPreco, tvStock, tvDescricao;
+        private TextView tvReferencia, tvPreco, tvStock, tvDescricao, tvCategoria;
         private ImageView foto;
         public ViewHolderLista(View view) {
             tvReferencia =view.findViewById(R.id.tvReferencia);
             tvPreco =view.findViewById(R.id.tvPreco);
             tvStock =view.findViewById(R.id.tvStock);
+            tvCategoria =view.findViewById(R.id.tvCategoria);
             tvDescricao =view.findViewById(R.id.tvDescricao);
         }
 
@@ -73,13 +74,15 @@ public class ListaArtigosAdaptador extends BaseAdapter{
             tvReferencia.setText(artigo.getReferencia()+"");
             tvPreco.setText(artigo.getPreco()+"");
             tvStock.setText(artigo.getStock()+"");
+            tvCategoria.setText(artigo.getIdCategoria()+"");
             tvDescricao.setText(artigo.getDescricao());
 
-            Glide.with(context)
-                    .load(artigo.getFoto())
-                    .placeholder(R.drawable.logocrm)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(foto);
+
+//            Glide.with(context)
+//                    .load(artigo.getFoto())
+//                    .placeholder(R.drawable.logocrm)
+//                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                    .into(foto);
 
         }
     }

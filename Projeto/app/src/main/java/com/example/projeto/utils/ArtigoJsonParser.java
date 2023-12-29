@@ -24,10 +24,10 @@ public class ArtigoJsonParser {
                 int referencia=artigoJson.getInt("referencia");
                 int preco=artigoJson.getInt("preco");
                 int stock=artigoJson.getInt("stock");
+                int idCategoria=artigoJson.getInt("categoria_id");
                 String descricao= artigoJson.getString("descricao");
-                String idCategoria= artigoJson.getString("idCategoria");
-                String foto= artigoJson.getString("foto");
-                Artigo artigo = new Artigo(id,referencia,preco,stock,descricao,idCategoria,foto);
+                //String foto= artigoJson.getString("foto");
+                Artigo artigo = new Artigo(id,referencia,preco,stock,idCategoria,descricao);
                 artigos.add(artigo);
             }
         }
@@ -45,10 +45,10 @@ public class ArtigoJsonParser {
             int referencia=artigoJson.getInt("referencia");
             int preco=artigoJson.getInt("preco");
             int stock=artigoJson.getInt("stock");
+            int idCategoria=artigoJson.getInt("categoria_id");
             String descricao= artigoJson.getString("descricao");
-            String idCategoria= artigoJson.getString("idCategoria");
-            String foto= artigoJson.getString("foto");
-            artigo = new Artigo(id,referencia,preco,stock,descricao,idCategoria,foto);
+            //String foto= artigoJson.getString("foto");
+            artigo = new Artigo(id,referencia,preco,stock,idCategoria,descricao);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
