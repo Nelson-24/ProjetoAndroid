@@ -1,17 +1,17 @@
 package com.example.projeto.modelo;
 
 public class Artigo {
-    private int id, referencia, preco, stock;
-    private String descricao, categoria_id, foto;
+    private int id, referencia, preco, stock, categoria_id;
+    private String descricao, foto;
 
-    public Artigo(int id, int referencia, int preco, int stock, String descricao, String categoria_id, String foto) {
+    public Artigo(int id, int referencia, int preco, int stock, int categoria_id, String descricao) {
         this.id = id;
         this.referencia = referencia;
         this.preco = preco;
         this.stock = stock;
         this.descricao = descricao;
         this.categoria_id = categoria_id;
-        this.foto = foto;
+        //this.foto = foto;
     }
 
     public int getId(){
@@ -49,10 +49,10 @@ public class Artigo {
         this.descricao = descricao;
     }
 
-    public String getIdCategoria() {
+    public int getIdCategoria() {
         return categoria_id;
     }
-    public void setIdCategoria(String idCategoria) {
+    public void setIdCategoria(int idCategoria) {
         this.categoria_id = idCategoria;
     }
 
