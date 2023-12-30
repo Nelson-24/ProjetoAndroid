@@ -74,8 +74,9 @@ public class SingletonGestorArtigos {
 
     public void adicionarAllArtigosBD(ArrayList<Artigo> artigos){
         artigoBD.removerAllArtigosBD();
-        for (Artigo artigo: artigos)
+        for (Artigo artigo: artigos) {
             adicionarArtigoBD(artigo);
+        }
     }
     public void editarArtigoBD(Artigo artigo){
         if (artigo!=null)

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class ArtigoBDHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "BDArtigos", TABLE_NAME = "Artigos";
-    private static final String ID="id", REFERENCIA="referencia", PRECO="preco", STOCK="stock", DESCRICAO="descricao", CATEGORIA="categoria_id", FOTO="foto";
+    private static final String ID="id", REFERENCIA="referencia", PRECO="preco", STOCK="stock", DESCRICAO="descricao", CATEGORIA="categoria", FOTO="foto";
     public static final int DB_VERSION = 1;
     private SQLiteDatabase db;
 
@@ -24,20 +24,19 @@ public class ArtigoBDHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        String sqlTableArtigo="CREATE TABLE " + TABLE_NAME + "(" +
+        sqLiteDatabase.execSQL("CREATE TABLE " + TABLE_NAME + " (" +
                 ID + " INTEGER PRIMARY KEY, "+
                 REFERENCIA + " INTEGER NOT NULL, "+
                 DESCRICAO + " TEXT NOT NULL, "+
                 PRECO + " INTEGER NOT NULL, "+
                 STOCK + " INTEGER NOT NULL, "+
-                CATEGORIA + " TEXT NOT NULL ); ";
+                CATEGORIA + " INTEGER NOT NULL) ");
 
-        sqLiteDatabase.execSQL(sqlTableArtigo);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        sqLiteDatabase.execSQL("Drop TABLE IF EXISTS "+ TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS "+ TABLE_NAME);
         onCreate(sqLiteDatabase);
     }
 
@@ -80,14 +79,20 @@ public class ArtigoBDHelper extends SQLiteOpenHelper {
         Cursor cursor=db.query(TABLE_NAME, new String[]{ID, REFERENCIA, DESCRICAO, PRECO, STOCK, CATEGORIA},
                 null,null, null, null, null);
 
-        if (cursor.moveToFirst()){
-            do {
-                Artigo auxArtigo = new Artigo(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2),
-                        cursor.getInt(3), cursor.getInt(4), cursor.getString(5));
-                artigos.add(auxArtigo);
-            }while (cursor.moveToNext());
-            cursor.close();
+        if (cursor != null) {
+            try {
+                if (cursor.moveToFirst()) {
+                    do {
+                        Artigo auxArtigo = new Artigo(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2),
+                                cursor.getInt(3), cursor.getInt(4), cursor.getString(5));
+                        artigos.add(auxArtigo);
+                    } while (cursor.moveToNext());
+                }
+            } finally {
+                cursor.close();
+            }
         }
+
         return artigos;
     }
 

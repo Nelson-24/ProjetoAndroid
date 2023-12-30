@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -128,22 +129,24 @@ public class DetalhesArtigoActivity extends AppCompatActivity implements ArtigoL
                 .into(imgFoto);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if (artigo!=null){
-            getMenuInflater().inflate(R.menu.menu_remover,menu);
-            return super.onCreateOptionsMenu(menu);
-        }
-        return false;
-    }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId()==R.id.itemRemover){
-            dialogRemover();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (artigo != null) {
+            getMenuInflater().inflate(R.menu.menu_pesquisa, menu);
+            return true;
         }
-        return super.onOptionsItemSelected(item);
+        return super.onCreateOptionsMenu(menu);
     }
+
+//    @Override
+//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+//        if (item.getItemId()==R.id.itemRemover){
+//            dialogRemover();
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
 
     private void dialogRemover() {

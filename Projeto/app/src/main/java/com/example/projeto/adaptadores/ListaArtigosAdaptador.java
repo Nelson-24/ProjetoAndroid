@@ -60,21 +60,17 @@ public class ListaArtigosAdaptador extends BaseAdapter{
     }
 
     private class ViewHolderLista{
-        private TextView tvReferencia, tvPreco, tvStock, tvDescricao, tvCategoria;
+        private TextView tvReferencia, tvPreco, tvDescricao;
         private ImageView foto;
         public ViewHolderLista(View view) {
             tvReferencia =view.findViewById(R.id.tvReferencia);
             tvPreco =view.findViewById(R.id.tvPreco);
-            tvStock =view.findViewById(R.id.tvStock);
-            tvCategoria =view.findViewById(R.id.tvCategoria);
             tvDescricao =view.findViewById(R.id.tvDescricao);
         }
 
         public void update(Artigo artigo){
             tvReferencia.setText(artigo.getReferencia()+"");
             tvPreco.setText(artigo.getPreco()+"");
-            tvStock.setText(artigo.getStock()+"");
-            tvCategoria.setText(artigo.getIdCategoria()+"");
             tvDescricao.setText(artigo.getDescricao());
 
 
