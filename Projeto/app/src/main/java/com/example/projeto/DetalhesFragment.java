@@ -16,7 +16,7 @@ import com.example.projeto.modelo.SingletonGestorArtigos;
 import java.util.ArrayList;
 public class DetalhesFragment extends Fragment {
 
-    private TextView tvReferencia, tvDescricao, tvPreco, tvStock, tvCategoria;
+    private TextView tvReferencia, tvDescricao, tvPreco;
     private ImageView imgFoto;
 
     public DetalhesFragment() {
@@ -31,8 +31,6 @@ public class DetalhesFragment extends Fragment {
         tvReferencia=view.findViewById(R.id.tvReferencia);
         tvDescricao=view.findViewById(R.id.tvDescricao);
         tvPreco=view.findViewById(R.id.tvPreco);
-        tvStock=view.findViewById(R.id.tvStock);
-        tvCategoria=view.findViewById(R.id.tvCategoria);
         imgFoto=view.findViewById(R.id.imgFoto);
 
         carregarArtigo();
@@ -47,8 +45,6 @@ public class DetalhesFragment extends Fragment {
             tvReferencia.setText(artigo.getReferencia() + "");
             tvDescricao.setText(artigo.getDescricao());
             tvPreco.setText(artigo.getPreco() + "");
-            tvStock.setText(artigo.getStock() + "");
-            tvCategoria.setText(artigo.getIdCategoria() + "");
         }
     }
 }
