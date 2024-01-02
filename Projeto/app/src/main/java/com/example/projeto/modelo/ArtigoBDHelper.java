@@ -44,11 +44,12 @@ public class ArtigoBDHelper extends SQLiteOpenHelper {
     public Artigo adicionarArtigoBD(Artigo artigo){
         ContentValues values=new ContentValues();
         values.put(REFERENCIA, artigo.getReferencia());
+        values.put(DESCRICAO, artigo.getDescricao());
         values.put(PRECO, artigo.getPreco());
         values.put(STOCK, artigo.getStock());
-        values.put(DESCRICAO, artigo.getDescricao());
         values.put(CATEGORIA, artigo.getIdCategoria());
         //values.put(FOTO, artigo.getFoto());
+        db.insert(TABLE_NAME, null, values);
         return artigo;
     }
 
@@ -81,12 +82,23 @@ public class ArtigoBDHelper extends SQLiteOpenHelper {
 
         if (cursor != null) {
             try {
-                if (cursor.moveToFirst()) {
-                    do {
-                        Artigo auxArtigo = new Artigo(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2),
-                                cursor.getInt(3), cursor.getInt(4), cursor.getString(5));
-                        artigos.add(auxArtigo);
-                    } while (cursor.moveToNext());
+                int columnIndexID = cursor.getColumnIndex(ID);
+                int columnIndexReferencia = cursor.getColumnIndex(REFERENCIA);
+                int columnIndexPreco = cursor.getColumnIndex(PRECO);
+                int columnIndexStock = cursor.getColumnIndex(STOCK);
+                int columnIndexCategoria = cursor.getColumnIndex(CATEGORIA);
+                int columnIndexDescricao = cursor.getColumnIndex(DESCRICAO);
+
+                while (cursor.moveToNext()) {
+                    int id = cursor.getInt(columnIndexID);
+                    int referencia = cursor.getInt(columnIndexReferencia);
+                    int preco = cursor.getInt(columnIndexPreco);
+                    int stock = cursor.getInt(columnIndexStock);
+                    int categoria = cursor.getInt(columnIndexCategoria);
+                    String descricao = cursor.getString(columnIndexDescricao);
+
+                    Artigo auxArtigo = new Artigo(id, referencia, preco, stock, categoria, descricao);
+                    artigos.add(auxArtigo);
                 }
             } finally {
                 cursor.close();
