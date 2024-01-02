@@ -69,15 +69,17 @@ public class SingletonGestorArtigos {
 
     //region ACESSOS BD
     public void adicionarArtigoBD(Artigo artigo){
-       artigoBD.adicionarArtigoBD(artigo);
+        artigoBD.adicionarArtigoBD(artigo);
     }
 
-    public void adicionarAllArtigosBD(ArrayList<Artigo> artigos){
+    public void adicionarAllArtigosBD(ArrayList<Artigo> artigos) {
         artigoBD.removerAllArtigosBD();
-        for (Artigo artigo: artigos) {
+
+        for (Artigo artigo : artigos) {
             adicionarArtigoBD(artigo);
         }
     }
+
     public void editarArtigoBD(Artigo artigo){
         if (artigo!=null)
             artigoBD.editarArtigoBD(artigo);
