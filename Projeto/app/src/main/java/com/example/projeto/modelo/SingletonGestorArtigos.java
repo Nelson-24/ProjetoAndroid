@@ -13,6 +13,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.projeto.MainActivity;
 import com.example.projeto.listeners.ArtigoListener;
 import com.example.projeto.listeners.ArtigosListener;
+import com.example.projeto.listeners.LoginListener;
 import com.example.projeto.utils.ArtigoJsonParser;
 
 import org.json.JSONArray;
@@ -27,10 +28,10 @@ public class SingletonGestorArtigos {
     private ArtigoBDHelper artigoBD=null;
     private static RequestQueue volleyQueue=null;
     private static final String mUrlAPIArtigos="http://10.0.2.2/ProjetoPSI/Projeto/backend/web/api/artigos/json";
-    private static final String mUrlAPILogin="http://10.0.2.2/ProjetoPSI/Projeto/backend/web/api/auth";
     private static final String TOKEN="pmtCFWGtJJKcXYtbWXWKI39N0ba7pYM2";
     private ArtigosListener artigosListener;
     private ArtigoListener artigoListener;
+    private LoginListener loginListener;
 
 
     public static synchronized SingletonGestorArtigos getInstance(Context context){
@@ -54,9 +55,8 @@ public class SingletonGestorArtigos {
         this.artigosListener = artigosListener;
     }
 
-    public ArrayList<Artigo> getArtigosBD(){
-        artigos = artigoBD.getAllArtigosBD();
-        return new ArrayList<>(artigos);
+    public void setLoginListener(LoginListener loginListener){
+        this.loginListener = loginListener;
     }
 
     public Artigo getArtigo(int id){
@@ -66,8 +66,11 @@ public class SingletonGestorArtigos {
         }
         return null;
     }
-
-    //region ACESSOS BD
+//region ACESSOS BD ARTIGOS
+    public ArrayList<Artigo> getArtigosBD(){
+        artigos = artigoBD.getAllArtigosBD();
+        return new ArrayList<>(artigos);
+    }
     public void adicionarArtigoBD(Artigo artigo){
         artigoBD.adicionarArtigoBD(artigo);
     }
@@ -88,7 +91,7 @@ public class SingletonGestorArtigos {
         artigoBD.removerArtigoBD(idartigo);
     }
 //endregion
-//region PEDIDOS API
+//region PEDIDOS API ARTIGOS
     public void adicionarArtigoAPI(final Artigo artigo, final Context context){
         if (!ArtigoJsonParser.isConnectionInternet(context))
             Toast.makeText(context, "Não tem ligação à Internet", Toast.LENGTH_SHORT).show();

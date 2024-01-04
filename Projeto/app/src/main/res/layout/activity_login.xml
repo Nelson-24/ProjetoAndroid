@@ -16,13 +16,13 @@
         android:src="@drawable/logocrm" />
 
     <EditText
-        android:id="@+id/etEmail"
+        android:id="@+id/etUser"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textEmailAddress"
-        android:hint="Email"
-        android:text="nelson@leiria.pt"/>
+        android:hint="Username"
+        android:text="nelson"/>
 
     <EditText
         android:id="@+id/etPassword"
@@ -31,7 +31,7 @@
         android:ems="10"
         android:inputType="textPassword"
         android:hint="Password"
-        android:text="nelson"/>
+        android:text="nelson123"/>
 
     <Button
         android:id="@+id/btnLogin"
