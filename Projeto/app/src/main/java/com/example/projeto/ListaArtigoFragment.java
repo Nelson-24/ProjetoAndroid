@@ -74,7 +74,7 @@ public class ListaArtigoFragment extends Fragment implements ArtigosListener{
 //                artigos=SingletonGestorArtigos.getInstance(getContext()).getArtigosBD();
 //                lvArtigos.setAdapter(new ListaArtigosAdaptador(getContext(),artigos));
                 SingletonGestorArtigos.getInstance(getContext()).getAllArtigosAPI(getContext());
-                if (resultCode==MainActivity.ADD)
+                if (requestCode==MainActivity.ADD)
                     Toast.makeText(getContext(),"Artigo adicionado com sucesso", Toast.LENGTH_LONG).show();
                 else
                     Toast.makeText(getContext(),"Artigo editado com sucesso", Toast.LENGTH_LONG).show();
@@ -85,7 +85,6 @@ public class ListaArtigoFragment extends Fragment implements ArtigosListener{
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.menu_pesquisa,menu);
-
         MenuItem itemPesquisa= menu.findItem(R.id.itemPesquisa);
         searchView= (SearchView) itemPesquisa.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

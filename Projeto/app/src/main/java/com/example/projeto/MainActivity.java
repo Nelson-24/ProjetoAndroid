@@ -25,9 +25,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private NavigationView navigationView;
     private DrawerLayout drawer;
-    private String email;
+    private String user;
     private FragmentManager fragmentManager;
-    public static final String EMAIL="EMAIL";
+    public static final String USER="Username";
     public static final int ADD=100, EDIT=200, DELETE=300;
     public static final String OP_CODE="operacao";
 
@@ -62,22 +62,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void carregarCabecalho() {
         Intent intent=getIntent();
-        email=intent.getStringExtra(LoginActivity.EMAIL);
+        user=intent.getStringExtra(LoginActivity.USER);
         SharedPreferences sharedPreUser=getSharedPreferences("DADOS_USER", Context.MODE_PRIVATE);
 
-        if (email != null) {
+        if (user != null) {
             SharedPreferences.Editor editorUser=sharedPreUser.edit();
-            editorUser.putString(EMAIL, email);
+            editorUser.putString(USER, user);
             editorUser.apply();
         }
         else{
-            email=sharedPreUser.getString(EMAIL,"Sem email");
+            user=sharedPreUser.getString(USER,"Sem username");
         }
 
 
         View hView=navigationView.getHeaderView(0);
-        TextView tvEmail=hView.findViewById(R.id.tvEmail);
-        tvEmail.setText(email);
+        TextView tvEmail=hView.findViewById(R.id.tvUser);
+        tvEmail.setText(user);
     }
 
     @Override
@@ -88,9 +88,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             setTitle(item.getTitle());
         }
 
-        else if(item.getItemId()==R.id.navEmail) {
-            enviarEmail();
-        }
+//        else if(item.getItemId()==R.id.navEmail) {
+//            enviarEmail();
+//        }
 
         if (fragment != null)
             fragmentManager.beginTransaction().replace(R.id.contentFragment, fragment).commit();
@@ -101,15 +101,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void enviarEmail() {
 
-        Intent intent=new Intent(Intent.ACTION_SEND);
-        intent.setType("message/rcf882");
-        intent.putExtra(intent.EXTRA_EMAIL,email);
-
-        if (intent.resolveActivity(getPackageManager())!=null) {
-            startActivity(intent);
-        }
-        else {
+//        Intent intent=new Intent(Intent.ACTION_SEND);
+//        intent.setType("message/rcf882");
+//        intent.putExtra(intent.EXTRA_EMAIL,email);
+//
+//        if (intent.resolveActivity(getPackageManager())!=null) {
+//            startActivity(intent);
+//        }
+//        else {
             Toast.makeText(this, "Não tem email configurado", Toast.LENGTH_LONG).show();
-        }
+//        }
     }
 }

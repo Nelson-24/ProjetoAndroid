@@ -10,13 +10,13 @@
             android:title="@string/artigos" />
     </group>
 
-    <item
-        android:title="Comunicar" >
-        <menu >
-            <item
-                android:id="@+id/navEmail"
-                android:icon="@drawable/ic_menu_mail"
-                android:title="Email" />
-        </menu>
-    </item>
+<!--    <item-->
+<!--        android:title="Comunicar" >-->
+<!--        <menu >-->
+<!--            <item-->
+<!--                android:id="@+id/navEmail"-->
+<!--                android:icon="@drawable/ic_menu_mail"-->
+<!--                android:title="Email" />-->
+<!--        </menu>-->
+<!--    </item>-->
 </menu>
