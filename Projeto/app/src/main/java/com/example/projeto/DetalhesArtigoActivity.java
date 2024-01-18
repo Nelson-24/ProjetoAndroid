@@ -4,10 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,35 +19,39 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.projeto.listeners.ArtigoListener;
 import com.example.projeto.modelo.Artigo;
-import com.example.projeto.modelo.SingletonGestorArtigos;
+import com.example.projeto.modelo.SingletonGestorApp;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class DetalhesArtigoActivity extends AppCompatActivity implements ArtigoListener{
 
     public static final String ID_ARTIGO="id";
+    public static final String DEFAULT_IMG = "http://10.0.2.2/ProjetoPSI_/frontend/web/images/logotipo-loja.png";
     private final int MIN_CHAR=3, MIN_NUMEROS=1;
-    private EditText etReferencia, etPreco, etStock, etDescricao, etCategoria;
+    private EditText etReferencia, etPreco, etStock, etDescricao, etCategoria, etIva;
     private FloatingActionButton fabGuardar;
-    private ImageView imgFoto;
+    private ImageView imgImagem;
     private Artigo artigo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalhes_artigo);
+        SharedPreferences sharedPreferences = getSharedPreferences("DADOS_USER", Context.MODE_PRIVATE);
+        String role = sharedPreferences.getString("ROLE", "");
 
         etReferencia=findViewById(R.id.etReferencia);
         etPreco=findViewById(R.id.etPreco);
         etStock=findViewById(R.id.etStock);
         etDescricao=findViewById(R.id.etDescricao);
         etCategoria=findViewById(R.id.etCategoria);
-        imgFoto=findViewById(R.id.imgFoto);
+        etIva=findViewById(R.id.etIva);
+        imgImagem=findViewById(R.id.imgImagem);
         fabGuardar=findViewById(R.id.fabGuardar);
-        SingletonGestorArtigos.getInstance(getApplicationContext()).setArtigoListener(this);
+        SingletonGestorApp.getInstance(getApplicationContext()).setArtigoListener(this);
 
         int id=getIntent().getIntExtra(ID_ARTIGO, 0);
         if (id!=0) {
-            artigo = SingletonGestorArtigos.getInstance(getApplicationContext()).getArtigo(id);
+            artigo = SingletonGestorApp.getInstance(getApplicationContext()).getArtigo(id);
             if (artigo!=null){
                 carregarArtigo();
                 fabGuardar.setImageResource(R.drawable.ic_action_guardar);
@@ -58,37 +63,44 @@ public class DetalhesArtigoActivity extends AppCompatActivity implements ArtigoL
             setTitle("Adicionar Artigo");
             fabGuardar.setImageResource(R.drawable.ic_action_adicionar);
         }
-
-        fabGuardar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (artigo!=null){ //artigo ja existe
-                    if (isArtigoValido()){
-                        artigo.setReferencia(Integer.parseInt(etReferencia.getText().toString()));
-                        artigo.setPreco(Integer.parseInt(etPreco.getText().toString()));
-                        artigo.setStock(Integer.parseInt(etStock.getText().toString()));
-                        artigo.setIdCategoria(Integer.parseInt(etCategoria.getText().toString()));
-                        artigo.setDescricao(etDescricao.getText().toString());
-                        SingletonGestorArtigos.getInstance(getApplicationContext()).editarArtigoAPI(artigo,getApplicationContext());
+        if ("cliente".equals(role)) {
+            fabGuardar.setVisibility(View.GONE);
+        } else {
+            fabGuardar.setVisibility(View.VISIBLE);
+            fabGuardar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (artigo!=null){ //artigo ja existe
+                        if (isArtigoValido()){
+                            artigo.setReferencia(etReferencia.getText().toString());
+                            artigo.setPreco(Float.parseFloat(etPreco.getText().toString()));
+                            artigo.setStock(Integer.parseInt(etStock.getText().toString()));
+                            artigo.setIdCategoria(Integer.parseInt(etCategoria.getText().toString()));
+                            artigo.setIdIva(Integer.parseInt(etIva.getText().toString()));
+                            artigo.setDescricao(etDescricao.getText().toString());
+                            SingletonGestorApp.getInstance(getApplicationContext()).editarArtigoAPI(artigo,getApplicationContext());
+                        }
+                    }
+                    else{ //artigo para criar
+                        if (isArtigoValido()){
+                            artigo=new Artigo(0, etReferencia.getText().toString(), Float.parseFloat(etPreco.getText().toString()),
+                                    Integer.parseInt(etStock.getText().toString()), Integer.parseInt(etCategoria.getText().toString()),
+                                    Integer.parseInt(etIva.getText().toString()), etDescricao.getText().toString(),imgImagem.toString());
+                            SingletonGestorApp.getInstance(getApplicationContext()).adicionarArtigoAPI(artigo,getApplicationContext());
+                        }
                     }
                 }
-                else{ //artigo para criar
-                    if (isArtigoValido()){
-                        artigo=new Artigo(0, Integer.parseInt(etReferencia.getText().toString()), Integer.parseInt(etPreco.getText().toString()),
-                                Integer.parseInt(etStock.getText().toString()), Integer.parseInt(etCategoria.getText().toString()), etDescricao.getText().toString());
-                        SingletonGestorArtigos.getInstance(getApplicationContext()).adicionarArtigoAPI(artigo,getApplicationContext());
-                    }
-                }
-            }
-        });
+            });
+        }
     }
 
     private boolean isArtigoValido() {
         String referencia= etReferencia.getText().toString();
         String preco= etPreco.getText().toString();
         String stock= etStock.getText().toString();
-        String descricao= etDescricao.getText().toString();
         String categoria= etCategoria.getText().toString();
+        String iva= etIva.getText().toString();
+        String descricao= etDescricao.getText().toString();
 
         if (referencia.length()<MIN_NUMEROS) {
             etReferencia.setError("Referência inválida");
@@ -110,6 +122,10 @@ public class DetalhesArtigoActivity extends AppCompatActivity implements ArtigoL
             etCategoria.setError("Id Categoria inválido");
             return false;
         }
+        if (iva.length()<MIN_NUMEROS) {
+            etIva.setError("Id Categoria inválido");
+            return false;
+        }
 
         return true;
     }
@@ -120,33 +136,42 @@ public class DetalhesArtigoActivity extends AppCompatActivity implements ArtigoL
         etPreco.setText(artigo.getPreco() + "");
         etStock.setText(artigo.getStock() + "");
         etCategoria.setText(artigo.getIdCategoria() + "");
+        etIva.setText(artigo.getIdIva() + "");
         etDescricao.setText(artigo.getDescricao());
-        //imgFoto.setText(artigo.getFoto());
         Glide.with(getApplicationContext())
-                .load(artigo.getFoto())
+                .load(artigo.getImagem())
                 .placeholder(R.drawable.logocrm)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imgFoto);
+                .into(imgImagem);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (artigo != null) {
-            getMenuInflater().inflate(R.menu.menu_pesquisa, menu);
-            return true;
+        SharedPreferences sharedPreferences = getSharedPreferences("DADOS_USER", Context.MODE_PRIVATE);
+        String role = sharedPreferences.getString("ROLE", "");
+
+        if ("cliente".equals(role)) {
+            //todo: iniciar o menu de adicioanr artigo ao carrinho
         }
+        else{
+            if (artigo != null) {
+                getMenuInflater().inflate(R.menu.menu_remover, menu);
+                return true;
+            }
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 
-//    @Override
-//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-//        if (item.getItemId()==R.id.itemRemover){
-//            dialogRemover();
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId()==R.id.itemRemover){
+            dialogRemover();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 
     private void dialogRemover() {
@@ -157,7 +182,7 @@ public class DetalhesArtigoActivity extends AppCompatActivity implements ArtigoL
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         //se confirmar que quero eliminar o livro
-                        SingletonGestorArtigos.getInstance(getApplicationContext()).removerArtigoAPI(artigo, getApplicationContext());
+                        SingletonGestorApp.getInstance(getApplicationContext()).removerArtigoAPI(artigo, getApplicationContext());
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {

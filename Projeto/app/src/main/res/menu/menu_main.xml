@@ -3,20 +3,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single" >
-        <item
-            android:id="@+id/navArtigos"
-            android:icon="@drawable/ic_menu_lista"
-            android:title="@string/artigos" />
-    </group>
+    <item
+        android:id="@+id/navInicio"
+        android:icon="@drawable/ic_home"
+        android:title="@string/inicial" />
 
-<!--    <item-->
-<!--        android:title="Comunicar" >-->
-<!--        <menu >-->
-<!--            <item-->
-<!--                android:id="@+id/navEmail"-->
-<!--                android:icon="@drawable/ic_menu_mail"-->
-<!--                android:title="Email" />-->
-<!--        </menu>-->
-<!--    </item>-->
+    <item android:title="@string/compras">
+        <menu >
+            <item
+                android:id="@+id/navArtigos"
+                android:icon="@drawable/ic_menu_lista"
+                android:title="@string/artigos" />
+            <item
+                android:id="@+id/navCategorias"
+                android:icon="@drawable/ic_categorias"
+                android:title="@string/categorias" />
+            <item
+                android:id="@+id/navCarrinho"
+                android:icon="@drawable/ic_carrinho_compras"
+                android:title="@string/carrinho" />
+        </menu>
+    </item>
+
+    <item android:title="@string/areacliente">
+        <menu >
+            <item
+                android:id="@+id/navCompras"
+                android:icon="@drawable/ic_historico"
+                android:title="@string/historico" />
+            <item
+                android:id="@+id/navFaturas"
+                android:icon="@drawable/ic_faturas"
+                android:title="@string/faturas" />
+            <item
+                android:id="@+id/navLogout"
+                android:icon="@drawable/ic_logout"
+                android:title="@string/logout" />
+        </menu>
+    </item>
+
 </menu>

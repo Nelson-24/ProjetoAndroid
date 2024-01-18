@@ -1,17 +1,19 @@
 package com.example.projeto.modelo;
 
 public class Artigo {
-    private int id, referencia, preco, stock, categoria_id;
-    private String descricao, foto;
+    private int id, stock, categoria_id, ivas_id;
+    private float preco;
+    private String referencia,descricao, imagem;
 
-    public Artigo(int id, int referencia, int preco, int stock, int categoria_id, String descricao) {
+    public Artigo(int id, String referencia, float preco, int stock, int categoria_id, int ivas_id, String descricao, String imagem) {
         this.id = id;
         this.referencia = referencia;
         this.preco = preco;
         this.stock = stock;
         this.descricao = descricao;
         this.categoria_id = categoria_id;
-        //this.foto = foto;
+        this.ivas_id = ivas_id;
+        this.imagem = imagem;
     }
 
     public int getId(){
@@ -21,17 +23,17 @@ public class Artigo {
         this.id = id;
     }
 
-    public int getReferencia(){
+    public String getReferencia(){
         return referencia;
     }
-    public void setReferencia(int referencia) {
+    public void setReferencia(String referencia) {
         this.referencia = referencia;
     }
 
-    public int getPreco(){
+    public float getPreco(){
         return preco;
     }
-    public void setPreco(int preco) {
+    public void setPreco(float preco) {
         this.preco = preco;
     }
 
@@ -56,11 +58,18 @@ public class Artigo {
         this.categoria_id = idCategoria;
     }
 
-    public String getFoto() {
-        return foto;
+    public int getIdIva() {
+        return ivas_id;
+    }
+    public void setIdIva(int idIva) {
+        this.ivas_id = idIva;
     }
 
-    public void setFoto(String foto) {
-        this.foto = foto;
+    public String getImagem() {
+        return imagem;
+    }
+
+    public void setImagem(String imagem) {
+        this.imagem = imagem;
     }
 }

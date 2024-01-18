@@ -1,7 +1,9 @@
 package com.example.projeto;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -22,15 +24,14 @@ import android.widget.Toast;
 import com.example.projeto.adaptadores.ListaArtigosAdaptador;
 import com.example.projeto.listeners.ArtigosListener;
 import com.example.projeto.modelo.Artigo;
-import com.example.projeto.modelo.SingletonGestorArtigos;
+import com.example.projeto.modelo.SingletonGestorApp;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
 public class ListaArtigoFragment extends Fragment implements ArtigosListener{
 
-    private ListView lvArtigos;
-    private ArrayList<Artigo> artigos;
+    private ListView lvLista;
     private FloatingActionButton fabLista;
     private SearchView searchView;
 
@@ -39,13 +40,13 @@ public class ListaArtigoFragment extends Fragment implements ArtigosListener{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_lista_artigo, container, false);
+        View view = inflater.inflate(R.layout.fragment_lista, container, false);
         setHasOptionsMenu(true);
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("DADOS_USER", Context.MODE_PRIVATE);
+        String role = sharedPreferences.getString("ROLE", "");
 
-        lvArtigos=view.findViewById(R.id.lvArtigos);
-//        artigos= SingletonGestorArtigos.getInstance(getContext()).getArtigosBD();
-//        lvArtigos.setAdapter(new ListaArtigosAdaptador(getContext(),artigos));
-        lvArtigos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lvLista=view.findViewById(R.id.lvLista);
+        lvLista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 Intent intent=new Intent(getContext(), DetalhesArtigoActivity.class);
@@ -54,16 +55,19 @@ public class ListaArtigoFragment extends Fragment implements ArtigosListener{
             }
         });
         fabLista=view.findViewById(R.id.fabLista);
-        fabLista.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getContext(), DetalhesArtigoActivity.class);
-                startActivityForResult(intent, MainActivity.ADD);
-            }
-        });
-
-        SingletonGestorArtigos.getInstance(getContext()).setArtigosListener(this);
-        SingletonGestorArtigos.getInstance(getContext()).getAllArtigosAPI(getContext());
+        if ("cliente".equals(role)) {
+            fabLista.setVisibility(View.GONE);
+        } else {
+            fabLista.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getContext(), DetalhesArtigoActivity.class);
+                    startActivityForResult(intent, MainActivity.ADD);
+                }
+            });
+        }
+        SingletonGestorApp.getInstance(getContext()).setArtigosListener(this);
+        SingletonGestorApp.getInstance(getContext()).getAllArtigosAPI(getContext());
         return view;
     }
     @Override
@@ -71,9 +75,7 @@ public class ListaArtigoFragment extends Fragment implements ArtigosListener{
         super.onActivityResult(requestCode, resultCode, intent);
         if (resultCode== Activity.RESULT_OK){
             if (requestCode==MainActivity.ADD || requestCode==MainActivity.EDIT){
-//                artigos=SingletonGestorArtigos.getInstance(getContext()).getArtigosBD();
-//                lvArtigos.setAdapter(new ListaArtigosAdaptador(getContext(),artigos));
-                SingletonGestorArtigos.getInstance(getContext()).getAllArtigosAPI(getContext());
+                SingletonGestorApp.getInstance(getContext()).getAllArtigosAPI(getContext());
                 if (requestCode==MainActivity.ADD)
                     Toast.makeText(getContext(),"Artigo adicionado com sucesso", Toast.LENGTH_LONG).show();
                 else
@@ -96,10 +98,10 @@ public class ListaArtigoFragment extends Fragment implements ArtigosListener{
             @Override
             public boolean onQueryTextChange(String newText) {
                 ArrayList<Artigo> tempListaArtigo=new ArrayList<>();
-                for (Artigo a:SingletonGestorArtigos.getInstance(getContext()).getArtigosBD())
-                    if (a.getDescricao().toLowerCase().contains(newText.toLowerCase()))
+                for (Artigo a: SingletonGestorApp.getInstance(getContext()).getArtigosBD())
+                    if (a.getDescricao().toLowerCase().contains(newText.toLowerCase()) || a.getReferencia().toLowerCase().contains(newText.toLowerCase()))
                         tempListaArtigo.add(a);
-                lvArtigos.setAdapter(new ListaArtigosAdaptador(getContext(),tempListaArtigo));
+                lvLista.setAdapter(new ListaArtigosAdaptador(getContext(),tempListaArtigo));
                 return false;
             }
         });
@@ -110,6 +112,6 @@ public class ListaArtigoFragment extends Fragment implements ArtigosListener{
     @Override
     public void onRefreshListaArtigos(ArrayList<Artigo> listaArtigos) {
         if (listaArtigos!=null)
-            lvArtigos.setAdapter(new ListaArtigosAdaptador(getContext(),listaArtigos));
+            lvLista.setAdapter(new ListaArtigosAdaptador(getContext(),listaArtigos));
     }
 }

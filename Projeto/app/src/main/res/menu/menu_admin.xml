@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <item
+        android:id="@+id/navInicio"
+        android:icon="@drawable/ic_home"
+        android:title="@string/inicial" />
+
+    <item android:title="@string/gest_dados">
+        <menu >
+            <item
+                android:id="@+id/navArtigos"
+                android:icon="@drawable/ic_menu_lista"
+                android:title="@string/artigos" />
+            <item
+                android:id="@+id/navCategorias"
+                android:icon="@drawable/ic_categorias"
+                android:title="@string/categorias" />
+            <item
+                android:id="@+id/navIvas"
+                android:icon="@drawable/ic_imposto"
+                android:title="@string/ivas" />
+            <item
+                android:id="@+id/navFaturas"
+                android:icon="@drawable/ic_faturas"
+                android:title="@string/faturas" />
+            <item
+                android:id="@+id/navUsers"
+                android:icon="@drawable/ic_users"
+                android:title="@string/users" />
+            <item
+                android:id="@+id/navLogout"
+                android:icon="@drawable/ic_logout"
+                android:title="@string/logout" />
+        </menu>
+    </item>
+</menu>
