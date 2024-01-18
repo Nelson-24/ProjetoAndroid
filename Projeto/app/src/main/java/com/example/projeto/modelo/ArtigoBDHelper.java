@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class ArtigoBDHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "BDArtigos", TABLE_NAME = "Artigos";
-    private static final String ID="id", REFERENCIA="referencia", PRECO="preco", STOCK="stock", DESCRICAO="descricao", CATEGORIA="categoria", FOTO="foto";
+    private static final String ID="id", REFERENCIA="referencia", PRECO="preco", STOCK="stock", DESCRICAO="descricao", CATEGORIA="categoria_id", IVA="ivas_id", IMAGEM="imagem";
     public static final int DB_VERSION = 1;
     private SQLiteDatabase db;
 
@@ -26,11 +26,13 @@ public class ArtigoBDHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL("CREATE TABLE " + TABLE_NAME + " (" +
                 ID + " INTEGER PRIMARY KEY, "+
-                REFERENCIA + " INTEGER NOT NULL, "+
+                REFERENCIA + " TEXT NOT NULL, "+
                 DESCRICAO + " TEXT NOT NULL, "+
-                PRECO + " INTEGER NOT NULL, "+
+                PRECO + " FLOAT NOT NULL, "+
                 STOCK + " INTEGER NOT NULL, "+
-                CATEGORIA + " INTEGER NOT NULL) ");
+                CATEGORIA + " INTEGER NOT NULL, "+
+                IVA + " INTEGER NOT NULL, "+
+                IMAGEM + " TEXT NOT NULL) ");
 
     }
 
@@ -44,11 +46,12 @@ public class ArtigoBDHelper extends SQLiteOpenHelper {
     public Artigo adicionarArtigoBD(Artigo artigo){
         ContentValues values=new ContentValues();
         values.put(REFERENCIA, artigo.getReferencia());
-        values.put(CATEGORIA, artigo.getIdCategoria());
         values.put(DESCRICAO, artigo.getDescricao());
         values.put(PRECO, artigo.getPreco());
         values.put(STOCK, artigo.getStock());
-        //values.put(FOTO, artigo.getFoto());
+        values.put(CATEGORIA, artigo.getIdCategoria());
+        values.put(IVA, artigo.getIdIva());
+        values.put(IMAGEM, artigo.getImagem());
         db.insert(TABLE_NAME, null, values);
         return artigo;
     }
@@ -60,7 +63,8 @@ public class ArtigoBDHelper extends SQLiteOpenHelper {
         values.put(PRECO, artigo.getPreco());
         values.put(STOCK, artigo.getStock());
         values.put(CATEGORIA, artigo.getIdCategoria());
-        //values.put(FOTO, artigo.getFoto());
+        values.put(IVA, artigo.getIdIva());
+        values.put(IMAGEM, artigo.getImagem());
         int nLinhasEditadas= db.update(TABLE_NAME, values, ID+"=?",new String[] {artigo.getId()+""});
         return nLinhasEditadas>0;
     }
@@ -77,13 +81,14 @@ public class ArtigoBDHelper extends SQLiteOpenHelper {
     public ArrayList<Artigo> getAllArtigosBD(){
         ArrayList<Artigo> artigos = new ArrayList<>();
 
-        Cursor cursor=db.query(TABLE_NAME, new String[]{ID, REFERENCIA, PRECO, STOCK, CATEGORIA, DESCRICAO},
+        Cursor cursor=db.query(TABLE_NAME, new String[]{ID, REFERENCIA, PRECO, STOCK, CATEGORIA, IVA, DESCRICAO, IMAGEM},
                 null,null, null, null, null);
 
         if (cursor.moveToFirst()){
             do {
-                Artigo auxArtigo = new Artigo(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2),
-                        cursor.getInt(3), cursor.getInt(4), cursor.getString(5));
+                Artigo auxArtigo = new Artigo(cursor.getInt(0), cursor.getString(1), cursor.getFloat(2),
+                        cursor.getInt(3), cursor.getInt(4), cursor.getInt(5), cursor.getString(6), cursor.getString(7
+                ));
                 artigos.add(auxArtigo);
             }while (cursor.moveToNext());
             cursor.close();

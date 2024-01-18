@@ -25,16 +25,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private NavigationView navigationView;
     private DrawerLayout drawer;
-    private String user;
     private FragmentManager fragmentManager;
-    public static final String USER="Username";
+    private MenuItem selectedItem;
     public static final int ADD=100, EDIT=200, DELETE=300;
-    public static final String OP_CODE="operacao";
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        sharedPreferences = getSharedPreferences("DADOS_USER", Context.MODE_PRIVATE);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -54,62 +54,87 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private boolean carregarFragmentoInicial(){
-        Menu menu= navigationView.getMenu();
+        sharedPreferences = getSharedPreferences("DADOS_USER", Context.MODE_PRIVATE);
+        String role = sharedPreferences.getString("ROLE", "");
+        if ("cliente".equals(role)) {
+            navigationView.getMenu().clear();
+            navigationView.inflateMenu(R.menu.menu_main);
+        } else {
+            navigationView.getMenu().clear();
+            navigationView.inflateMenu(R.menu.menu_admin);
+        }
+
+        Menu menu = navigationView.getMenu();
         MenuItem item = menu.getItem(0);
         item.setChecked(true);
+
+        // Chamar onNavigationItemSelected para carregar o fragmento correspondente
         return onNavigationItemSelected(item);
     }
 
     private void carregarCabecalho() {
-        Intent intent=getIntent();
-        user=intent.getStringExtra(LoginActivity.USER);
-        SharedPreferences sharedPreUser=getSharedPreferences("DADOS_USER", Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("DADOS_USER", Context.MODE_PRIVATE);
+        String email = sharedPreferences.getString("EMAIL", "email");
 
-        if (user != null) {
-            SharedPreferences.Editor editorUser=sharedPreUser.edit();
-            editorUser.putString(USER, user);
-            editorUser.apply();
-        }
-        else{
-            user=sharedPreUser.getString(USER,"Sem username");
-        }
-
-
-        View hView=navigationView.getHeaderView(0);
-        TextView tvEmail=hView.findViewById(R.id.tvUser);
-        tvEmail.setText(user);
+        View View=navigationView.getHeaderView(0);
+        TextView tvEmail=View.findViewById(R.id.tvEmail);
+        tvEmail.setText(email);
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        Fragment fragment=null;
-        if(item.getItemId()==R.id.navArtigos){
+        Fragment fragment = null;
+        if (item.getItemId() == R.id.navInicio) {
+            fragment = new PaginaPrincipalFragment();
+        }
+        else if (item.getItemId() == R.id.navArtigos) {
             fragment = new ListaArtigoFragment();
-            setTitle(item.getTitle());
+        }
+        else if (item.getItemId() == R.id.navCategorias) {
+            fragment = new ListaArtigoFragment();
+        }
+        else if (item.getItemId() == R.id.navIvas) {
+            fragment = new ListaArtigoFragment();
+        }
+        else if (item.getItemId() == R.id.navCarrinho) {
+            fragment = new ListaArtigoFragment();
+        }
+        else if (item.getItemId() == R.id.navCompras) {
+            fragment = new ListaArtigoFragment();
+        }
+        else if (item.getItemId() == R.id.navFaturas) {
+            fragment = new ListaArtigoFragment();
+        }
+        else if (item.getItemId() == R.id.navUsers) {
+            fragment = new ListaArtigoFragment();
+        }
+        else if (item.getItemId() == R.id.navLogout) {
+            SharedPreferences sharedPreferences = getSharedPreferences("DADOS_USER", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.remove("TOKEN");
+            editor.remove("EMAIL");
+            editor.remove("ROLE");
+            editor.apply();
+            Toast.makeText(this, "Sessão encerrada", Toast.LENGTH_SHORT).show();
+            Intent Intent = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(Intent);
+            finish();
         }
 
-//        else if(item.getItemId()==R.id.navEmail) {
-//            enviarEmail();
-//        }
+        if (fragment != null) {
+            if (selectedItem != null) {
+                selectedItem.setChecked(false);
+            }
 
-        if (fragment != null)
             fragmentManager.beginTransaction().replace(R.id.contentFragment, fragment).commit();
 
+            item.setChecked(true);
+            selectedItem = item;
+
+            setTitle(item.getTitle());
+        }
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
 
-    private void enviarEmail() {
-
-//        Intent intent=new Intent(Intent.ACTION_SEND);
-//        intent.setType("message/rcf882");
-//        intent.putExtra(intent.EXTRA_EMAIL,email);
-//
-//        if (intent.resolveActivity(getPackageManager())!=null) {
-//            startActivity(intent);
-//        }
-//        else {
-            Toast.makeText(this, "Não tem email configurado", Toast.LENGTH_LONG).show();
-//        }
     }
 }

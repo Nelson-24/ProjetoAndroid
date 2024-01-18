@@ -61,7 +61,6 @@ public class ListaArtigosAdaptador extends BaseAdapter{
 
     private class ViewHolderLista{
         private TextView tvReferencia, tvPreco, tvDescricao;
-        private ImageView foto;
         public ViewHolderLista(View view) {
             tvReferencia =view.findViewById(R.id.tvReferencia);
             tvPreco =view.findViewById(R.id.tvPreco);
@@ -72,14 +71,6 @@ public class ListaArtigosAdaptador extends BaseAdapter{
             tvReferencia.setText(artigo.getReferencia()+"");
             tvPreco.setText(artigo.getPreco()+"");
             tvDescricao.setText(artigo.getDescricao());
-
-
-//            Glide.with(context)
-//                    .load(artigo.getFoto())
-//                    .placeholder(R.drawable.logocrm)
-//                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                    .into(foto);
-
         }
     }
 }

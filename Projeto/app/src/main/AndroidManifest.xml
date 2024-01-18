@@ -17,17 +17,19 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:launchMode="singleTop"
-            android:theme="@style/Theme.Projeto.NoActionBar" />
-
+            android:name=".DetalhesFaturaActivity"
+            android:exported="false" />
         <activity
-            android:name=".DetalhesArtigoActivity"
-            android:exported="false"
-            android:parentActivityName=".MainActivity" />
+            android:name=".CarrinhoActivity"
+            android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".DetalhesIvaActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DetalhesCategoriaActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LinkActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,6 +37,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.Projeto.NoActionBar" />
+        <activity
+            android:name=".DetalhesArtigoActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

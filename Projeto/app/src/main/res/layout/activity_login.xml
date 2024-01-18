@@ -15,14 +15,23 @@
         android:layout_weight="0.5"
         android:src="@drawable/logocrm" />
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:text="Bem-Vindo" />
+
     <EditText
         android:id="@+id/etUser"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="textEmailAddress"
-        android:hint="Username"
-        android:text="nelson"/>
+        android:inputType="text"
+        android:hint="@string/username" />
 
     <EditText
         android:id="@+id/etPassword"
@@ -30,8 +39,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPassword"
-        android:hint="Password"
-        android:text="nelson123"/>
+        android:hint="@string/password" />
 
     <Button
         android:id="@+id/btnLogin"
@@ -46,4 +54,5 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.2"/>
+
 </LinearLayout>

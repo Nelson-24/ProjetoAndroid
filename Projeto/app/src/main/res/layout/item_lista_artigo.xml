@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    tools:context=".DetalhesFragment">
+    tools:context=".DetalhesArtigoFragment">
 
     <ImageView
-        android:id="@+id/imgFoto"
+        android:id="@+id/imgImagem"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="0.3"
@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="0.7"
         android:layout_marginStart="5dp"
+        android:layout_marginBottom="10dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -30,15 +31,18 @@
                 android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingRight="5dp"
+                android:paddingEnd="5dp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 android:text="@string/referencia" />
 
             <TextView
                 android:id="@+id/tvReferencia"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:layout_weight="1"
+                android:textSize="18sp"
+                android:text="" />
         </LinearLayout>
 
         <LinearLayout
@@ -50,16 +54,18 @@
                 android:id="@+id/textView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingRight="5dp"
+                android:paddingEnd="5dp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 android:text="@string/descricao" />
 
             <TextView
                 android:id="@+id/tvDescricao"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="TextView" />
+                android:textSize="18sp"
+                android:text="" />
         </LinearLayout>
 
         <LinearLayout
@@ -71,16 +77,18 @@
                 android:id="@+id/textView6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingRight="5dp"
+                android:paddingEnd="5dp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 android:text="@string/preco" />
 
             <TextView
                 android:id="@+id/tvPreco"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="TextView" />
+                android:textSize="18sp"
+                android:text="" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
