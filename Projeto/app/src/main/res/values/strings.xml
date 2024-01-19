@@ -37,4 +37,13 @@
     <string name="data">Data</string>
     <string name="nif">NIF</string>
     <string name="user">Username</string>
+    <string name="id_utilizador">Id Utilizador:</string>
+    <string name="valor_iva">Valor Iva:</string>
+    <string name="valor">Valor:</string>
+    <string name="estado">Estado:</string>
+    <string name="valor_total_">Valor Total:</string>
+    <string name="data_">Data:</string>
+    <string name="remover">Remover</string>
+    <string name="anular_fatura">Anular Fatura</string>
+    <string name="estado_">Estado</string>
 </resources>

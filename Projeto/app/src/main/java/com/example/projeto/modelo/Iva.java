@@ -6,8 +6,9 @@ public class Iva {
     private float percentagem;
     private String descricao;
 
-    public Iva(int id, float percentagem, String descricao) {
+    public Iva(int id, Float percentagem, String descricao) {
         this.id = id;
+        this.percentagem = percentagem;
         this.descricao = descricao;
     }
 

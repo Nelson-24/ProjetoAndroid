@@ -91,22 +91,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragment = new ListaArtigoFragment();
         }
         else if (item.getItemId() == R.id.navCategorias) {
-            fragment = new ListaArtigoFragment();
+            fragment = new ListaCategoriaFragment();
         }
         else if (item.getItemId() == R.id.navIvas) {
-            fragment = new ListaArtigoFragment();
+            fragment = new ListaIvaFragment();
         }
         else if (item.getItemId() == R.id.navCarrinho) {
-            fragment = new ListaArtigoFragment();
+            fragment = new ListaCarrinhoFragment();
         }
         else if (item.getItemId() == R.id.navCompras) {
-            fragment = new ListaArtigoFragment();
+            fragment = new ListaCarrinhoFragment();
         }
         else if (item.getItemId() == R.id.navFaturas) {
-            fragment = new ListaArtigoFragment();
+            fragment = new ListaFaturaFragment();
         }
         else if (item.getItemId() == R.id.navUsers) {
-            fragment = new ListaArtigoFragment();
+            fragment = new ListaUserFragment();
         }
         else if (item.getItemId() == R.id.navLogout) {
             SharedPreferences sharedPreferences = getSharedPreferences("DADOS_USER", Context.MODE_PRIVATE);
@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             editor.remove("TOKEN");
             editor.remove("EMAIL");
             editor.remove("ROLE");
+            editor.remove("USER_ID");
             editor.apply();
             Toast.makeText(this, "Sessão encerrada", Toast.LENGTH_SHORT).show();
             Intent Intent = new Intent(getApplicationContext(), LoginActivity.class);

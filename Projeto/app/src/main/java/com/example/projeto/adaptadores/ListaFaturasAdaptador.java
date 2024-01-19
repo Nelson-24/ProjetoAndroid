@@ -56,17 +56,19 @@ public class ListaFaturasAdaptador extends BaseAdapter {
     }
 
     private class ViewHolderLista {
-        private TextView tvData, tvValorTotal, tvIdUser;
+        private TextView tvData, tvValorTotal, tvEstado, tvIdUser;
 
         public ViewHolderLista(View view) {
             tvData = view.findViewById(R.id.tvData);
             tvValorTotal = view.findViewById(R.id.tvValorTotal);
+            tvEstado = view.findViewById(R.id.tvEstado);
             tvIdUser = view.findViewById(R.id.tvIdUser);
         }
 
         public void update(Fatura fatura) {
             tvData.setText(fatura.getData());
             tvValorTotal.setText(String.valueOf(fatura.getValorTotal()));
+            tvEstado.setText(fatura.getEstado());
             tvIdUser.setText(String.valueOf(fatura.getUsers_id()));
         }
     }

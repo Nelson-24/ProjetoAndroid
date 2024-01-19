@@ -64,6 +64,13 @@ public class DetalhesArtigoActivity extends AppCompatActivity implements ArtigoL
             fabGuardar.setImageResource(R.drawable.ic_action_adicionar);
         }
         if ("cliente".equals(role)) {
+            etReferencia.setKeyListener(null);
+            etPreco.setKeyListener(null);
+            etStock.setKeyListener(null);
+            etDescricao.setKeyListener(null);
+            etCategoria.setKeyListener(null);
+            etIva.setKeyListener(null);
+
             fabGuardar.setVisibility(View.GONE);
         } else {
             fabGuardar.setVisibility(View.VISIBLE);
@@ -181,14 +188,12 @@ public class DetalhesArtigoActivity extends AppCompatActivity implements ArtigoL
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //se confirmar que quero eliminar o livro
                         SingletonGestorApp.getInstance(getApplicationContext()).removerArtigoAPI(artigo, getApplicationContext());
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //se nao quero eliminar o artigo nao faz nada
                     }
                 })
                 .setIcon(android.R.drawable.ic_delete)

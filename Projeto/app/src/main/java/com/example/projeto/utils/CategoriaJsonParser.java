@@ -27,22 +27,6 @@ public class CategoriaJsonParser {
         return categorias;
     }
 
-    public static Categoria parserJsonCategoria(String response) {
-        try {
-            JSONObject jsonCategoria = new JSONObject(response);
-
-            int id = jsonCategoria.optInt("id", -1);
-            String descricao = jsonCategoria.optString("descricao", "");
-
-            Categoria categoria = new Categoria(id, descricao);
-            return categoria;
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     public static String categoriaParaJson(Categoria categoria) {
         JSONObject jsonCategoria = new JSONObject();
         try {

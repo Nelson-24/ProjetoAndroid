@@ -54,7 +54,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
     }
 
     @Override
-    public void onRefreshLogin(boolean success, String mensagem, String token, String email, String role) {
+    public void onRefreshLogin(boolean success, String mensagem, String token, String email, String role, int user_id) {
         if (success) {
             Toast.makeText(this, mensagem, Toast.LENGTH_SHORT).show();
             Intent Intent=new Intent(getApplicationContext(),MainActivity.class);
