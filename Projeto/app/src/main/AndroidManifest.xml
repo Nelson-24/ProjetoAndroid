@@ -20,9 +20,6 @@
             android:name=".DetalhesFaturaActivity"
             android:exported="false" />
         <activity
-            android:name=".CarrinhoActivity"
-            android:exported="false" />
-        <activity
             android:name=".DetalhesIvaActivity"
             android:exported="false" />
         <activity
