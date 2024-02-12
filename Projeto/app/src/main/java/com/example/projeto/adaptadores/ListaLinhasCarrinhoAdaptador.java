@@ -42,32 +42,35 @@ public class ListaLinhasCarrinhoAdaptador extends BaseAdapter {
         if (inflater == null)
             inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        if (convertView == null)
-            convertView = inflater.inflate(R.layout.item_lista_linha_carrinho, null);
+        ViewHolderLista viewHolder;
 
-        ViewHolderLista viewHolder = (ViewHolderLista) convertView.getTag();
-        if (viewHolder == null) {
+        if (convertView == null) {
+            convertView = inflater.inflate(R.layout.item_lista_linha_carrinho, null);
             viewHolder = new ViewHolderLista(convertView);
             convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolderLista) convertView.getTag();
         }
+
         viewHolder.update(linhasCarrinho.get(position));
 
         return convertView;
     }
 
-    private class ViewHolderLista {
-        private TextView tvDescricao, tvQuantidade, tvPreco;
 
-        public ViewHolderLista(View view) {
-            tvDescricao = view.findViewById(R.id.tvDescricao);
+    static class ViewHolderLista {
+        TextView tvIdArtigo, tvQuantidade, tvPreco;
+
+        ViewHolderLista(View view) {
+            tvIdArtigo = view.findViewById(R.id.tvIdArtigo);
             tvQuantidade = view.findViewById(R.id.tvQuantidade);
             tvPreco = view.findViewById(R.id.tvPreco);
         }
 
-        public void update(LinhaCarrinho linhaCarrinho) {
-            tvDescricao.setText(linhaCarrinho.getArtigos_id());
-            tvQuantidade.setText(linhaCarrinho.getQuantidade()+"");
-            tvPreco.setText(linhaCarrinho.getValor()+"");
+        void update(LinhaCarrinho linhaCarrinho) {
+            tvIdArtigo.setText(String.valueOf(linhaCarrinho.getArtigos_id()));
+            tvQuantidade.setText(String.valueOf(linhaCarrinho.getQuantidade()));
+            tvPreco.setText(String.valueOf(linhaCarrinho.getValor()));
         }
     }
 }

@@ -45,6 +45,7 @@ public class ArtigoBDHelper extends SQLiteOpenHelper {
     //region CRUD
     public Artigo adicionarArtigoBD(Artigo artigo){
         ContentValues values=new ContentValues();
+        values.put(ID, artigo.getId());
         values.put(REFERENCIA, artigo.getReferencia());
         values.put(DESCRICAO, artigo.getDescricao());
         values.put(PRECO, artigo.getPreco());
@@ -58,6 +59,7 @@ public class ArtigoBDHelper extends SQLiteOpenHelper {
 
     public boolean editarArtigoBD(Artigo artigo){
         ContentValues values=new ContentValues();
+        values.put(ID, artigo.getId());
         values.put(REFERENCIA, artigo.getReferencia());
         values.put(DESCRICAO, artigo.getDescricao());
         values.put(PRECO, artigo.getPreco());

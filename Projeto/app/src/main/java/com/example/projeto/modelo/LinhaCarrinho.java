@@ -2,10 +2,10 @@ package com.example.projeto.modelo;
 
 public class LinhaCarrinho {
     private int id, quantidade, artigos_id, carrinhocompras_id;
-    private float valor;
+    private double valor;
     private String referencia;
 
-    public LinhaCarrinho(int id, int quantidade, float valor, String referencia, int artigos_id, int carrinhocompras_id) {
+    public LinhaCarrinho(int id, int quantidade, double valor, String referencia, int artigos_id, int carrinhocompras_id) {
         this.id = id;
         this.quantidade = quantidade;
         this.valor = valor;
@@ -28,10 +28,10 @@ public class LinhaCarrinho {
         this.quantidade = quantidade;
     }
 
-    public float getValor() {
+    public double getValor() {
         return valor;
     }
-    public void setValor(int valor) {
+    public void setValor(double valor) {
         this.valor = valor;
     }
 

@@ -33,7 +33,8 @@ public class ArtigoJsonParser {
     }
 
     public static Artigo parserJsonArtigo(String response){
-        try {JSONObject jsonArtigo = new JSONObject(response);
+        try {
+            JSONObject jsonArtigo = new JSONObject(response);
 
             int id = jsonArtigo.optInt("id", -1);
             String referencia = jsonArtigo.optString("referencia", "");

@@ -55,12 +55,8 @@ public class LinhaCarrinhoJsonParser {
         JSONObject jsonLinhaCarrinho = new JSONObject();
         try {
             jsonLinhaCarrinho.put("quantidade", linhaCarrinho.getQuantidade());
-            jsonLinhaCarrinho.put("valor", linhaCarrinho.getValor());
-            jsonLinhaCarrinho.put("referencia", linhaCarrinho.getReferencia());
             jsonLinhaCarrinho.put("artigos_id", linhaCarrinho.getArtigos_id());
             jsonLinhaCarrinho.put("carrinhocompras_id", linhaCarrinho.getCarrinhocompras_id());
-
-            // Adicione outros campos conforme necessário
 
         } catch (JSONException e) {
             e.printStackTrace();

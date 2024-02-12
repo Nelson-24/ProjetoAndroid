@@ -1,5 +1,7 @@
 package com.example.projeto;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -10,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.projeto.modelo.Artigo;
 import com.example.projeto.modelo.SingletonGestorApp;
 
@@ -45,7 +49,6 @@ public class DetalhesArtigoFragment extends Fragment {
             tvReferencia.setText(artigo.getReferencia() + "");
             tvDescricao.setText(artigo.getDescricao());
             tvPreco.setText(artigo.getPreco() + "");
-
         }
     }
 }

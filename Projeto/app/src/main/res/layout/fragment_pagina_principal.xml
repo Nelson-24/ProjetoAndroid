@@ -40,7 +40,7 @@
             android:textSize="20sp"
             android:textColor="@color/black"
             android:textAlignment="center"
-            android:text="@string/descricao_inicial" />
+            android:text="@string/descricao_inicial_" />
 
         <View
             android:id="@+id/view"

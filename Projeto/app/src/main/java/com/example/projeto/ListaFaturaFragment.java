@@ -35,6 +35,7 @@ public class ListaFaturaFragment extends Fragment implements FaturasListener {
 
     private ListView lvLista;
     private SearchView searchView;
+    private FloatingActionButton fabLista;
 
     public ListaFaturaFragment() {
     }
@@ -46,6 +47,8 @@ public class ListaFaturaFragment extends Fragment implements FaturasListener {
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("DADOS_USER", Context.MODE_PRIVATE);
         String role = sharedPreferences.getString("ROLE", "");
         int userId = sharedPreferences.getInt("USER_ID", 0);
+        fabLista = view.findViewById(R.id.fabLista);
+        fabLista.setVisibility(View.GONE);
 
         lvLista = view.findViewById(R.id.lvLista);
         lvLista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -110,8 +113,6 @@ public class ListaFaturaFragment extends Fragment implements FaturasListener {
     public void onRefreshListaFaturas(ArrayList<Fatura> listaFaturas) {
         if (listaFaturas != null) {
             lvLista.setAdapter(new ListaFaturasAdaptador(getContext(), listaFaturas));
-        }else {
-            Toast.makeText(getContext(), "Nenhuma fatura encontrada", Toast.LENGTH_SHORT).show();
         }
     }
 }

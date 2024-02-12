@@ -3,9 +3,11 @@ package com.example.projeto;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +33,6 @@ public class DetalhesFaturaFragment extends Fragment {
         tvValorTotal = view.findViewById(R.id.tvValorTotal);
         tvEstado = view.findViewById(R.id.tvEstado);
         tvIdUser = view.findViewById(R.id.tvIdUser);
-
         carregarFatura();
         return view;
     }
@@ -54,8 +55,6 @@ public class DetalhesFaturaFragment extends Fragment {
             tvValorTotal.setText(String.valueOf(fatura.getValorTotal()));
             tvEstado.setText(fatura.getEstado());
             tvIdUser.setText(String.valueOf(fatura.getUsers_id()));
-        }else {
-            Toast.makeText(getContext(), "Nenhuma fatura encontrada", Toast.LENGTH_SHORT).show();
         }
     }
 }

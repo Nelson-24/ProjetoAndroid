@@ -9,23 +9,30 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.projeto.listeners.ArtigoListener;
+import com.example.projeto.listeners.CategoriasListener;
 import com.example.projeto.modelo.Artigo;
+import com.example.projeto.modelo.Categoria;
+import com.example.projeto.modelo.Iva;
 import com.example.projeto.modelo.SingletonGestorApp;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DetalhesArtigoActivity extends AppCompatActivity implements ArtigoListener{
 
     public static final String ID_ARTIGO="id";
-    public static final String DEFAULT_IMG = "http://10.0.2.2/ProjetoPSI_/frontend/web/images/logotipo-loja.png";
     private final int MIN_CHAR=3, MIN_NUMEROS=1;
     private EditText etReferencia, etPreco, etStock, etDescricao, etCategoria, etIva;
     private FloatingActionButton fabGuardar;
@@ -56,7 +63,7 @@ public class DetalhesArtigoActivity extends AppCompatActivity implements ArtigoL
                 carregarArtigo();
                 fabGuardar.setImageResource(R.drawable.ic_action_guardar);
             }
-            else //significa que algo de errado aconteceu
+            else
                 finish();
         }
         else {
@@ -98,8 +105,25 @@ public class DetalhesArtigoActivity extends AppCompatActivity implements ArtigoL
                     }
                 }
             });
+
+            etCategoria.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ArrayList<Categoria> listaCategorias = SingletonGestorApp.getInstance(getApplicationContext()).getAllCategoriasAPI(getApplicationContext());
+                    showCategoriaSelectionDialog(listaCategorias);
+                }
+            });
+
+            etIva.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ArrayList<Iva> listaIVAs = SingletonGestorApp.getInstance(getApplicationContext()).getAllIvasAPI(getApplicationContext());
+                    showIVASelectionDialog(listaIVAs);
+                }
+            });
         }
     }
+
 
     private boolean isArtigoValido() {
         String referencia= etReferencia.getText().toString();
@@ -138,6 +162,8 @@ public class DetalhesArtigoActivity extends AppCompatActivity implements ArtigoL
     }
 
     private void carregarArtigo() {
+        SharedPreferences sharedPreferences = getSharedPreferences("DADOS_LINK", Context.MODE_PRIVATE);
+        String link = sharedPreferences.getString("LINK_INICIAL", "link");
         setTitle("Detalhes: "+artigo.getDescricao());
         etReferencia.setText(artigo.getReferencia() + "");
         etPreco.setText(artigo.getPreco() + "");
@@ -145,8 +171,9 @@ public class DetalhesArtigoActivity extends AppCompatActivity implements ArtigoL
         etCategoria.setText(artigo.getIdCategoria() + "");
         etIva.setText(artigo.getIdIva() + "");
         etDescricao.setText(artigo.getDescricao());
+
         Glide.with(getApplicationContext())
-                .load(artigo.getImagem())
+                .load("http://"+link+"/images/materiais/"+artigo.getImagem())
                 .placeholder(R.drawable.logocrm)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imgImagem);
@@ -158,28 +185,80 @@ public class DetalhesArtigoActivity extends AppCompatActivity implements ArtigoL
         SharedPreferences sharedPreferences = getSharedPreferences("DADOS_USER", Context.MODE_PRIVATE);
         String role = sharedPreferences.getString("ROLE", "");
 
-        if ("cliente".equals(role)) {
-            //todo: iniciar o menu de adicioanr artigo ao carrinho
-        }
-        else{
+        if (!"cliente".equals(role)) {
             if (artigo != null) {
                 getMenuInflater().inflate(R.menu.menu_remover, menu);
                 return true;
             }
         }
-
+        else{
+            if (artigo != null) {
+                getMenuInflater().inflate(R.menu.menu_carrinho, menu);
+                return true;
+            }
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId()==R.id.itemRemover){
+        SharedPreferences sharedPreferences = getSharedPreferences("DADOS_USER", Context.MODE_PRIVATE);
+        int carrinhoId = sharedPreferences.getInt("CARRINHO_ID", 0);
+
+        if (item.getItemId() == R.id.itemRemover) {
             dialogRemover();
             return true;
+        } else if (item.getItemId() == R.id.itemCarrinho) {
+            if (carrinhoId == 0) {
+                adicionarNovoCarrinho();
+            }
+            dialogQuantidade();
+            return true;
         }
+        
         return super.onOptionsItemSelected(item);
     }
 
+    private void adicionarNovoCarrinho() {
+        SharedPreferences sharedPreferences = getSharedPreferences("DADOS_USER", Context.MODE_PRIVATE);
+        int userId = sharedPreferences.getInt("USER_ID", 0);
+        if (userId != 0) {
+            SingletonGestorApp.getInstance(getApplicationContext()).adicionarCarrinhoAPI(userId, getApplicationContext());
+        } else {
+            Toast.makeText(getApplicationContext(), "ID do usuário inválido", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void dialogQuantidade() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Adicionar ao Carrinho");
+        View viewInflated = LayoutInflater.from(this).inflate(R.layout.fragment_quantidade, null);
+
+        final EditText quantidade = viewInflated.findViewById(R.id.tvInsereQuantidade);
+
+        builder.setView(viewInflated);
+
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                SharedPreferences sharedPreferences = getSharedPreferences("DADOS_USER", Context.MODE_PRIVATE);
+                int carrinhoId = sharedPreferences.getInt("CARRINHO_ID", 0);
+                String stringQuantidade = quantidade.getText().toString();
+                if (!stringQuantidade.isEmpty()) {
+                    int quantidade = Integer.parseInt(stringQuantidade);
+                    SingletonGestorApp.getInstance(getApplicationContext()).adicionarLinhaCarrinhoAPI(artigo.getId(),carrinhoId, quantidade, getApplicationContext());
+                }
+            }
+        });
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.setIcon(android.R.drawable.ic_dialog_info);
+        builder.show();
+    }
 
     private void dialogRemover() {
         AlertDialog.Builder builder= new AlertDialog.Builder(this);
@@ -200,6 +279,45 @@ public class DetalhesArtigoActivity extends AppCompatActivity implements ArtigoL
                 .show();
     }
 
+    private void showCategoriaSelectionDialog(ArrayList<Categoria> listaCategorias) {
+        if (listaCategorias != null) {
+            CharSequence[] categoriasArray = new CharSequence[listaCategorias.size()];
+            for (int i = 0; i < listaCategorias.size(); i++) {
+                categoriasArray[i] ="ID: " + listaCategorias.get(i).getId() + ": " + listaCategorias.get(i).getDescricao();
+            }
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Selecione uma Categoria")
+                    .setItems(categoriasArray, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            etCategoria.setText(String.valueOf(listaCategorias.get(which).getId()));
+                        }
+                    });
+            builder.create().show();
+        } else {
+            Toast.makeText(getApplicationContext(), "A lista de categorias está vazia", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showIVASelectionDialog(ArrayList<Iva> listaIVAs) {
+        if (listaIVAs != null) {
+            CharSequence[] ivasArray = new CharSequence[listaIVAs.size()];
+            for (int i = 0; i < listaIVAs.size(); i++) {
+                ivasArray[i] ="ID: " + listaIVAs.get(i).getId() + ": " + listaIVAs.get(i).getDescricao() + " - " + listaIVAs.get(i).getPercentagem();
+            }
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Selecione um IVA")
+                    .setItems(ivasArray, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            etIva.setText(String.valueOf(listaIVAs.get(which).getId()));
+                        }
+                    });
+            builder.create().show();
+        } else {
+            Toast.makeText(getApplicationContext(), "A lista de IVAs está vazia", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     @Override
     public void onRefreshDetalhes(int op) {

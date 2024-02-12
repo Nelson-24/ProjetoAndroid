@@ -49,22 +49,43 @@ public class DetalhesFaturaActivity extends AppCompatActivity implements FaturaL
     private void carregarFatura() {
         setTitle("Detalhes da Fatura: " + fatura.getId());
 
-        tvdata.setText(fatura.getData());
-        tvValotTotal.setText(String.valueOf(fatura.getValorTotal()));
-        tvEstado.setText(fatura.getEstado());
-        tvValor.setText(String.valueOf(fatura.getValor()));
-        tvValorIva.setText(String.valueOf(fatura.getValorIva()));
-        tvIdUser.setText(String.valueOf(fatura.getUsers_id()));
+        if (fatura.getData() != null) {
+            tvdata.setText(fatura.getData());
+        }
+
+        if (fatura.getValorTotal() != 0.0) {
+            tvValotTotal.setText(String.valueOf(fatura.getValorTotal()));
+        }
+
+        if (fatura.getEstado() != null) {
+            tvEstado.setText(fatura.getEstado());
+        }
+
+        if (fatura.getValor() != 0.0) {
+            tvValor.setText(String.valueOf(fatura.getValor()));
+        }
+
+        if (fatura.getValorIva() != 0.0) {
+            tvValorIva.setText(String.valueOf(fatura.getValorIva()));
+        }
+
+        if (fatura.getUsers_id() != 0) {
+            tvIdUser.setText(String.valueOf(fatura.getUsers_id()));
+        }
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (fatura != null) {
-            getMenuInflater().inflate(R.menu.menu_anular, menu);
-            return true;
-        }
+        SharedPreferences sharedPreferences = getSharedPreferences("DADOS_USER", Context.MODE_PRIVATE);
+        String role = sharedPreferences.getString("ROLE", "");
 
+        if (!"cliente".equals(role)) {
+            if (fatura != null) {
+                getMenuInflater().inflate(R.menu.menu_anular, menu);
+                return true;
+            }
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -80,7 +101,7 @@ public class DetalhesFaturaActivity extends AppCompatActivity implements FaturaL
     private void dialogRemover() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Anular Fatura")
-                .setMessage("Tem a certeza que pretende remover a fatura?")
+                .setMessage("Tem a certeza que pretende anular a fatura?")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

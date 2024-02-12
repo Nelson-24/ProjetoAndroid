@@ -19,7 +19,7 @@
             <ImageView
                 android:id="@+id/imgImagem"
                 android:layout_width="match_parent"
-                android:layout_height="400dp"
+                android:layout_height="250dp"
                 android:layout_weight="0.5"
                 android:src="@drawable/logocrm" />
             <LinearLayout
@@ -29,16 +29,12 @@
                 android:layout_marginBottom="10dp">
                 <TextView
                     android:id="@+id/textView6"
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:textSize="20sp"
-                    android:text="@string/id_utilizador" />
-                <TextView
-                    android:id="@+id/tvIdUser"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"/>
+                    android:layout_height="match_parent"
+                    android:textStyle="bold"
+                    android:textSize="25sp"
+                    android:textAlignment="center"
+                    android:text="@string/dados_do_carrinho" />
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -134,8 +130,6 @@
                     android:layout_height="wrap_content"
                     android:textSize="20sp"/>
             </LinearLayout>
-
-
         </LinearLayout>
     </ScrollView>
 

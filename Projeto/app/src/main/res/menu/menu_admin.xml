@@ -27,10 +27,6 @@
                 android:icon="@drawable/ic_faturas"
                 android:title="@string/faturas" />
             <item
-                android:id="@+id/navUsers"
-                android:icon="@drawable/ic_users"
-                android:title="@string/users" />
-            <item
                 android:id="@+id/navLogout"
                 android:icon="@drawable/ic_logout"
                 android:title="@string/logout" />

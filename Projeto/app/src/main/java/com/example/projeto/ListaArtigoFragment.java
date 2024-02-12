@@ -98,9 +98,10 @@ public class ListaArtigoFragment extends Fragment implements ArtigosListener{
             @Override
             public boolean onQueryTextChange(String newText) {
                 ArrayList<Artigo> tempListaArtigo=new ArrayList<>();
-                for (Artigo a: SingletonGestorApp.getInstance(getContext()).getArtigosBD())
+                for (Artigo a: SingletonGestorApp.getInstance(getContext()).getArtigosBD()){
                     if (a.getDescricao().toLowerCase().contains(newText.toLowerCase()) || a.getReferencia().toLowerCase().contains(newText.toLowerCase()))
                         tempListaArtigo.add(a);
+                }
                 lvLista.setAdapter(new ListaArtigosAdaptador(getContext(),tempListaArtigo));
                 return false;
             }

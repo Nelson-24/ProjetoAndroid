@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="text"
-        android:text="10.0.2.2"
+        android:text="10.0.2.2/ProjetoPSI_/backend/web"
         android:hint="@string/endereco_server" />
 
     <Button

@@ -56,18 +56,18 @@ public class ListaCarrinhosAdaptador extends BaseAdapter {
     }
 
     private class ViewHolderLista {
-        private TextView tvData, tvValorTotal, tvIdUser;
+        private TextView tvData,tvEstado, tvValorTotal;
 
         public ViewHolderLista(View view) {
             tvData = view.findViewById(R.id.tvData);
+            tvEstado = view.findViewById(R.id.tvEstado);
             tvValorTotal = view.findViewById(R.id.tvValorTotal);
-            tvIdUser = view.findViewById(R.id.tvIdUser);
         }
 
         public void update(Carrinho carrinho) {
             tvData.setText(carrinho.getData());
+            tvEstado.setText(carrinho.getEstado());
             tvValorTotal.setText(carrinho.getValorTotal()+"");
-            tvIdUser.setText(carrinho.getUsers_id()+"");
         }
     }
 }

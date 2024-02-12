@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.projeto.adaptadores.ListaCategoriasAdaptador;
 import com.example.projeto.adaptadores.ListaIvasAdaptador;
 import com.example.projeto.listeners.IvasListener;
 import com.example.projeto.modelo.Iva;
@@ -89,6 +90,8 @@ public class ListaIvaFragment extends Fragment implements IvasListener {
         inflater.inflate(R.menu.menu_pesquisa, menu);
         MenuItem itemPesquisa = menu.findItem(R.id.itemPesquisa);
         searchView = (SearchView) itemPesquisa.getActionView();
+        lvLista.setAdapter(new ListaIvasAdaptador(getContext(), SingletonGestorApp.getInstance(getContext()).getAllIvasAPI(getContext())));
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String newText) {
@@ -101,10 +104,12 @@ public class ListaIvaFragment extends Fragment implements IvasListener {
                 for (Iva i : SingletonGestorApp.getInstance(getContext()).getAllIvasAPI(getContext())) {
                     if (i.getDescricao().toLowerCase().contains(newText.toLowerCase()))
                         tempListaIva.add(i);
+                    lvLista.setAdapter(new ListaIvasAdaptador(getContext(),tempListaIva));
                 }
-                lvLista.setAdapter(new ListaIvasAdaptador(getContext(), tempListaIva));
+
                 return false;
             }
+
         });
 
         super.onCreateOptionsMenu(menu, inflater);

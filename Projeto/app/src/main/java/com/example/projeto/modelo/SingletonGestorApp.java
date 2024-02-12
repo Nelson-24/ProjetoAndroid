@@ -13,11 +13,13 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.projeto.MainActivity;
 import com.example.projeto.listeners.ArtigoListener;
 import com.example.projeto.listeners.ArtigosListener;
+import com.example.projeto.listeners.CarrinhoAtivoListener;
 import com.example.projeto.listeners.CarrinhoListener;
 import com.example.projeto.listeners.CarrinhosListener;
 import com.example.projeto.listeners.CategoriaListener;
@@ -29,20 +31,21 @@ import com.example.projeto.listeners.IvasListener;
 import com.example.projeto.listeners.LinhaCarrinhoListener;
 import com.example.projeto.listeners.LinhasCarrinhoListener;
 import com.example.projeto.listeners.LoginListener;
-import com.example.projeto.listeners.UserListener;
-import com.example.projeto.listeners.UsersListener;
 import com.example.projeto.utils.ArtigoJsonParser;
+import com.example.projeto.utils.CarrinhoJsonParser;
 import com.example.projeto.utils.CategoriaJsonParser;
 import com.example.projeto.utils.FaturaJsonParser;
 import com.example.projeto.utils.IvaJsonParser;
+import com.example.projeto.utils.LinhaCarrinhoJsonParser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class SingletonGestorApp {
@@ -52,7 +55,6 @@ public class SingletonGestorApp {
     private ArrayList<Fatura> faturas;
     private ArrayList<Iva> ivas;
     private ArrayList<LinhaCarrinho> linhaCarrinhos;
-    private ArrayList<User> users;
     private static SingletonGestorApp instance = null;
     private ArtigoBDHelper artigoBD=null;
     private static RequestQueue volleyQueue=null;
@@ -64,6 +66,7 @@ public class SingletonGestorApp {
     private CategoriaListener categoriaListener;
     private CarrinhosListener carrinhosListener;
     private CarrinhoListener carrinhoListener;
+    private CarrinhoAtivoListener carrinhoAtivoListener;
 
     private FaturasListener faturasListener;
     private FaturaListener faturaListener;
@@ -74,11 +77,11 @@ public class SingletonGestorApp {
     private LinhasCarrinhoListener linhasCarrinhoListener;
     private LinhaCarrinhoListener linhaCarrinhoListener;
 
-    private UsersListener usersListener;
-    private UserListener userListener;
     private LoginListener loginListener;
     private SharedPreferences sharedPrefUser;
     private SharedPreferences sharedPrefLink;
+
+    private int countArtigos;
 
 
     public static synchronized SingletonGestorApp getInstance(Context context){
@@ -91,6 +94,11 @@ public class SingletonGestorApp {
 
     private SingletonGestorApp(Context context){
         artigos= new ArrayList<>();
+        carrinhos = new ArrayList<>();
+        categorias = new ArrayList<>();
+        faturas = new ArrayList<>();
+        ivas = new ArrayList<>();
+        linhaCarrinhos = new ArrayList<>();
         artigoBD=new ArtigoBDHelper(context);
     }
 
@@ -110,6 +118,9 @@ public class SingletonGestorApp {
         this.categoriasListener = categoriasListener;
     }
 
+    public void setCarrinhoAtivoListener(CarrinhoAtivoListener carrinhoAtivoListener) {
+        this.carrinhoAtivoListener = carrinhoAtivoListener;
+    }
     public void setCarrinhoListener(CarrinhoListener carrinhoListener) {
         this.carrinhoListener = carrinhoListener;
     }
@@ -134,20 +145,12 @@ public class SingletonGestorApp {
         this.ivasListener = ivasListener;
     }
 
-    public void setLinhaCarrinhos(LinhaCarrinhoListener linhaCarrinhoListener){
+    public void setLinhaCarrinhoListener(LinhaCarrinhoListener linhaCarrinhoListener){
         this.linhaCarrinhoListener = linhaCarrinhoListener;
     }
 
-    public void setLinhasCarrinhos(LinhasCarrinhoListener linhasCarrinhoListener){
+    public void setLinhasCarrinhoListener(LinhasCarrinhoListener linhasCarrinhoListener){
         this.linhasCarrinhoListener = linhasCarrinhoListener;
-    }
-
-    public void setUserListener(UserListener userListener) {
-        this.userListener = userListener;
-    }
-
-    public void setUsersListener(UsersListener usersListener) {
-        this.usersListener = usersListener;
     }
 
     public void setLoginListener(LoginListener loginListener){
@@ -164,9 +167,12 @@ public class SingletonGestorApp {
         return null;
     }
     public Carrinho getCarrinho(int id){
-        for (Carrinho carrinho: carrinhos){
-            if (carrinho.getId()==id)
+        Iterator<Carrinho> iterator = carrinhos.iterator();
+        while (iterator.hasNext()) {
+            Carrinho carrinho = iterator.next();
+            if (carrinho.getId() == id) {
                 return carrinho;
+            }
         }
         return null;
     }
@@ -198,13 +204,6 @@ public class SingletonGestorApp {
         }
         return null;
     }
-    public User getUser(int id){
-        for (User user: users){
-            if (user.getId()==id)
-                return user;
-        }
-        return null;
-    }
 //endregion
 
     public static boolean isConnectionInternet(Context context){
@@ -216,7 +215,8 @@ public class SingletonGestorApp {
         sharedPrefLink = context.getSharedPreferences("DADOS_LINK", Context.MODE_PRIVATE);
         if (sharedPrefLink != null) {
             SharedPreferences.Editor editor = sharedPrefLink.edit();
-            editor.putString("LINK", "http://"+link+"/ProjetoPSI_/backend/web/api");
+            editor.putString("LINK", "http://"+link+":8080/api");
+            editor.putString("LINK_INICIAL", link);
             editor.apply();
         }
     }
@@ -251,6 +251,7 @@ public class SingletonGestorApp {
                         String token = jsonResponse.getString("token");
                         String email = jsonResponse.getString("email");
                         String role = jsonResponse.getString("role");
+                        int carrinho_id = jsonResponse.getInt("carrinho_id");
                         String mensagem = jsonResponse.getString("message");
 
                         if (loginListener != null) {
@@ -261,9 +262,10 @@ public class SingletonGestorApp {
                                 editor.putString("EMAIL", email);
                                 editor.putString("ROLE", role);
                                 editor.putInt("USER_ID", user_id);
+                                editor.putInt("CARRINHO_ID", carrinho_id);
                                 editor.apply();
                             }
-                            loginListener.onRefreshLogin(success, mensagem, token, email, role, user_id);
+                            loginListener.onRefreshLogin(success, mensagem, token, email, role, user_id, carrinho_id);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -334,7 +336,7 @@ public class SingletonGestorApp {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Erro ao aceder a API", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Erro ao adicionar o artigo", Toast.LENGTH_SHORT).show();
                 }
             }) {
                 @Override
@@ -381,7 +383,7 @@ public class SingletonGestorApp {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     artigos=artigoBD.getAllArtigosBD();
-                    Toast.makeText(context, "Erro ao aceder a API", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Erro a aceder aos artigos", Toast.LENGTH_SHORT).show();
                 }
 
 
@@ -411,7 +413,7 @@ public class SingletonGestorApp {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     artigos=artigoBD.getAllArtigosBD();
-                    Toast.makeText(context, "Erro ao aceder a API", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Erro ao remover o artigo", Toast.LENGTH_SHORT).show();
                 }
             });
             volleyQueue.add(req);
@@ -428,7 +430,7 @@ public class SingletonGestorApp {
                 @Override
                 public void onResponse(String response) {
                     // guardar na bdlocal para funcionar offline
-                    adicionarArtigoBD(ArtigoJsonParser.parserJsonArtigo(response));
+                    editarArtigoBD(ArtigoJsonParser.parserJsonArtigo(response));
                     // informar a vista
                     if (artigoListener != null)
                         artigoListener.onRefreshDetalhes(MainActivity.ADD);
@@ -436,7 +438,7 @@ public class SingletonGestorApp {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Erro ao aceder a API", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Erro ao editar o artigo", Toast.LENGTH_SHORT).show();
                 }
             }) {
                 @Override
@@ -457,6 +459,148 @@ public class SingletonGestorApp {
     }
 //endregion
 //region PEDIDOS API CARRINHOS
+
+    public ArrayList<Carrinho> getCarrinhosFinalizadosoAPI(int userId, final Context context){
+        if(!isConnectionInternet(context)) {
+            Toast.makeText(context, "Não tem ligação à Internet", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            getUrlAPI(context);
+            getToken(context);
+            JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, UrlAPI +"/carrinho/finalizado/"+userId+"?access-token="+TOKEN, null, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    carrinhos = CarrinhoJsonParser.parserJsonCarrinhos(response);
+
+                    if (carrinhosListener != null) {
+                        carrinhosListener.onRefreshListaCarrinhos(carrinhos);
+                    }
+                }
+
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, "Não tem compras efetuadas", Toast.LENGTH_SHORT).show();
+                }
+            });
+            volleyQueue.add(req);
+        }
+        return carrinhos;
+    }
+
+    public void getCarrinhosAPI(int carrinhoID, final Context context){
+        if(!isConnectionInternet(context)) {
+            Toast.makeText(context, "Não tem ligação à Internet", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            getUrlAPI(context);
+            getToken(context);
+            JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, UrlAPI +"/carrinho/carrinho/"+carrinhoID+"?access-token="+TOKEN, null, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    carrinhos = CarrinhoJsonParser.parserJsonCarrinhos(response);
+                    if (carrinhosListener != null) {
+                        carrinhosListener.onRefreshListaCarrinhos(carrinhos);
+                    }
+                }
+
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, "Não possui um carrinho ativo", Toast.LENGTH_SHORT).show();
+                }
+            });
+            volleyQueue.add(req);
+        }
+    }
+
+    public void adicionarCarrinhoAPI(int userId, final Context context){
+        if(!isConnectionInternet(context)) {
+            Toast.makeText(context, "Não tem ligação à Internet", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            getUrlAPI(context);
+            getToken(context);
+            JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, UrlAPI + "/carrinho/adicionarcarrinho/" + userId + "?access-token=" + TOKEN, null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        int carrinhoId = response.getInt("id");
+                        SharedPreferences sharedPreferences = context.getSharedPreferences("DADOS_USER", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putInt("CARRINHO_ID", carrinhoId);
+                        editor.apply();
+
+                        if (carrinhoListener != null) {
+                            carrinhoListener.onRefreshDetalhes(MainActivity.ADD);
+                        }
+                        Toast.makeText(context, "Carrinho adicionado com sucesso", Toast.LENGTH_SHORT).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(context, "Erro ao adicionar o carrinho", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, "Erro ao adicionar o carrinho", Toast.LENGTH_SHORT).show();
+                }
+            });
+            volleyQueue.add(req);
+        }
+    }
+
+    public void removerCarrinhoAPI(int idCarrinho, final Context context){
+        if(!isConnectionInternet(context))
+            Toast.makeText(context, "Não tem ligação à Internet", Toast.LENGTH_SHORT).show();
+        else {
+            getUrlAPI(context);
+            getToken(context);
+            StringRequest req = new StringRequest(Request.Method.DELETE, UrlAPI + "/carrinho/eliminarcarrinho/"+idCarrinho+"?access-token="+TOKEN, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    SharedPreferences sharedPreferences = context.getSharedPreferences("DADOS_USER", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putInt("CARRINHO_ID", 0);
+                    editor.apply();
+                    if (carrinhoListener != null)
+                        carrinhoListener.onRefreshDetalhes(MainActivity.ADD);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, "Não tem nenhum carrinho ativo", Toast.LENGTH_SHORT).show();
+                }
+            });
+            volleyQueue.add(req);
+        }
+    }
+
+    public void finalizarCarrinhoAPI(int idCarrinho, final Context context){
+        if(!isConnectionInternet(context))
+            Toast.makeText(context, "Não tem ligação à Internet", Toast.LENGTH_SHORT).show();
+        else {
+            getUrlAPI(context);
+            getToken(context);
+            StringRequest req = new StringRequest(Request.Method.PUT, UrlAPI + "/carrinho/finalizar/"+idCarrinho+"?access-token="+TOKEN, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    SharedPreferences sharedPreferences = context.getSharedPreferences("DADOS_USER", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putInt("CARRINHO_ID", 0);
+                    editor.apply();
+                    if (carrinhoListener != null)
+                        carrinhoListener.onRefreshDetalhes(MainActivity.ADD);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, "Erro ao finalizar o carrinho", Toast.LENGTH_SHORT).show();
+                }
+            });
+            volleyQueue.add(req);
+        }
+    }
 //endregion
 //region PEDIDOS API CATEGORIAS
     public void adicionarCategoriaAPI(final Categoria categoria, final Context context){
@@ -474,7 +618,7 @@ public class SingletonGestorApp {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Erro ao aceder a API", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Erro ao adicionar a categoria", Toast.LENGTH_SHORT).show();
                 }
             }) {
                 @Override
@@ -515,7 +659,7 @@ public class SingletonGestorApp {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Erro ao aceder a API", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Erro a aceder às categorias", Toast.LENGTH_SHORT).show();
                 }
 
             });
@@ -542,7 +686,7 @@ public class SingletonGestorApp {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Erro ao aceder a API", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Erro ao remover a categoria", Toast.LENGTH_SHORT).show();
                 }
             });
             volleyQueue.add(req);
@@ -564,7 +708,7 @@ public class SingletonGestorApp {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Erro ao aceder a API", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Erro ao editar a categoria", Toast.LENGTH_SHORT).show();
                 }
             }) {
                 @Override
@@ -585,22 +729,26 @@ public class SingletonGestorApp {
     }
 //endregion
 //region PEDIDOS API FATURAS
-    public void adicionarFaturaAPI(final Fatura fatura, final Context context){
+    public void adicionarFaturaAPI(int idCarrinho, final Context context){
         if(!isConnectionInternet(context))
             Toast.makeText(context, "Não tem ligação à Internet", Toast.LENGTH_SHORT).show();
         else {
             getUrlAPI(context);
             getToken(context);
-            StringRequest req = new StringRequest(Request.Method.POST, UrlAPI + "/fatura/adicionarfatura/"+fatura.getId()+"?access-token="+TOKEN, new Response.Listener<String>() {
+            StringRequest req = new StringRequest(Request.Method.POST, UrlAPI + "/fatura/adicionarfatura/"+idCarrinho+"?access-token="+TOKEN, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
+                    SharedPreferences sharedPreferences = context.getSharedPreferences("DADOS_USER", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putInt("CARRINHO_ID", 0);
+                    editor.apply();
                     if (faturaListener != null)
                         faturaListener.onRefreshDetalhes(MainActivity.ADD);
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Erro ao aceder a API", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Erro a emitir a fatura", Toast.LENGTH_SHORT).show();
                 }
             });
             volleyQueue.add(req);
@@ -627,7 +775,7 @@ public class SingletonGestorApp {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Erro ao aceder a API", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Erro a aceder às faturas", Toast.LENGTH_SHORT).show();
                 }
 
             });
@@ -635,6 +783,7 @@ public class SingletonGestorApp {
         }
         return faturas;
     }
+
     public ArrayList<Fatura> getFaturasClienteAPI(int userId, final Context context){
         if(!isConnectionInternet(context)) {
             Toast.makeText(context, "Não tem ligação à Internet", Toast.LENGTH_SHORT).show();
@@ -655,9 +804,8 @@ public class SingletonGestorApp {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Erro na chamada da API", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Não possui faturas", Toast.LENGTH_SHORT).show();
                 }
-
             });
             volleyQueue.add(req);
         }
@@ -679,7 +827,7 @@ public class SingletonGestorApp {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Erro ao aceder a API", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Erro ao anular a fatura", Toast.LENGTH_SHORT).show();
                 }
             });
             volleyQueue.add(req);
@@ -702,7 +850,7 @@ public class SingletonGestorApp {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Erro ao aceder a API", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Erro a adicionar o IVA", Toast.LENGTH_SHORT).show();
                 }
             }) {
                 @Override
@@ -742,7 +890,7 @@ public class SingletonGestorApp {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Erro ao aceder a API", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Erro a aceder aos IVAs", Toast.LENGTH_SHORT).show();
                 }
 
             });
@@ -769,7 +917,7 @@ public class SingletonGestorApp {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Erro ao aceder a API", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Erro a remover o IVA", Toast.LENGTH_SHORT).show();
                 }
             });
             volleyQueue.add(req);
@@ -791,7 +939,7 @@ public class SingletonGestorApp {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Erro ao aceder a API", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Erro a editar o IVA", Toast.LENGTH_SHORT).show();
                 }
             }) {
                 @Override
@@ -812,7 +960,141 @@ public class SingletonGestorApp {
     }
 //endregion
 //region PEDIDOS API LINHAS CARRINHOS
-//endregion
-//region PEDIDOS API USERS
+    public ArrayList<LinhaCarrinho> getLinhasCarrinhoApi(int idCarrinho, final Context context){
+        if(!isConnectionInternet(context)) {
+            Toast.makeText(context, "Não tem ligação à Internet", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            getUrlAPI(context);
+            getToken(context);
+            JsonArrayRequest req = new JsonArrayRequest(Request.Method.GET, UrlAPI +"/linha/linhas/"+idCarrinho+"?access-token="+TOKEN, null, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    linhaCarrinhos = LinhaCarrinhoJsonParser.parserJsonLinhasCarrinho(response);
+
+                    if (linhasCarrinhoListener!=null)
+                        linhasCarrinhoListener.onRefreshListaLinhasCarrinho(linhaCarrinhos);
+
+                }
+
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, "Não possui artigos no carrinho", Toast.LENGTH_SHORT).show();
+
+                }
+
+            });
+            volleyQueue.add(req);
+        }
+        return linhaCarrinhos;
+    }
+
+    public void adicionarLinhaCarrinhoAPI(int idArtigo, int idCarrinho, int quantidade, final Context context){
+        if(!isConnectionInternet(context))
+            Toast.makeText(context, "Não tem ligação à Internet", Toast.LENGTH_SHORT).show();
+        else {
+            getUrlAPI(context);
+            getToken(context);
+            StringRequest req = new StringRequest(Request.Method.POST, UrlAPI + "/linha/adicionarlinha?access-token="+TOKEN, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    if (linhaCarrinhoListener != null)
+                        linhaCarrinhoListener.onRefreshDetalhes(MainActivity.ADD);
+                    Toast.makeText(context, "Artigo adicionado ao carrinho", Toast.LENGTH_SHORT).show();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, "Erro ao adicionar o artigo ao carrinho", Toast.LENGTH_SHORT).show();
+                }
+            }) {
+                @Override
+                public byte[] getBody(){
+                    JSONObject jsonBody = new JSONObject();
+                    try {
+                        jsonBody.put("quantidade", quantidade);
+                        jsonBody.put("artigo_id", idArtigo);
+                        jsonBody.put("carrinho_id", idCarrinho);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    return jsonBody.toString().getBytes();
+                }
+
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("Content-Type", "application/json");
+                    return headers;
+                }
+            };
+            volleyQueue.add(req);
+        }
+    }
+
+    public void removerLinhaCarrinhoAPI(final LinhaCarrinho linhaCarrinho, final Context context){
+        if(!isConnectionInternet(context))
+            Toast.makeText(context, "Não tem ligação à Internet", Toast.LENGTH_SHORT).show();
+        else
+        {
+            getUrlAPI(context);
+            getToken(context);
+            StringRequest req = new StringRequest(Request.Method.DELETE, UrlAPI + "/linha/eliminarlinha/"+ linhaCarrinho.getId() +"?access-token="+TOKEN, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    if (linhaCarrinhoListener!=null)
+                        linhaCarrinhoListener.onRefreshDetalhes(MainActivity.DELETE);
+                }
+
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, "Erro ao remover o artigo do carrinho", Toast.LENGTH_SHORT).show();
+                }
+            });
+            volleyQueue.add(req);
+        }
+    }
+
+    public void editarLinhaCarrinhoAPI(final LinhaCarrinho linhaCarrinho, final Context context){
+        if(!isConnectionInternet(context))
+            Toast.makeText(context, "Não tem ligação à Internet", Toast.LENGTH_SHORT).show();
+        else {
+            getUrlAPI(context);
+            getToken(context);
+            StringRequest req = new StringRequest(Request.Method.PUT, UrlAPI + "/linha/editarlinha/"+ linhaCarrinho.getId() +"?access-token="+TOKEN, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    if (linhaCarrinhoListener != null)
+                        linhaCarrinhoListener.onRefreshDetalhes(MainActivity.ADD);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, "Erro a editar a quantidade", Toast.LENGTH_SHORT).show();
+                }
+            }) {
+                @Override
+                public byte[] getBody(){
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("quantidade", linhaCarrinho.getQuantidade());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    return jsonObject.toString().getBytes();
+                }
+
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("Content-Type", "application/json");
+                    return headers;
+                }
+            };
+            volleyQueue.add(req);
+        }
+    }
 //endregion
 }
