@@ -1,5 +1,7 @@
 package com.example.projeto;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -16,10 +18,9 @@ import java.util.ArrayList;
 
 public class DetalhesCarrinhoFragment extends Fragment {
 
-    private TextView tvData, tvValorTotal, tvIdUser;
+    private TextView tvData, tvValorTotal, tvEstado;
 
     public DetalhesCarrinhoFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -29,20 +30,25 @@ public class DetalhesCarrinhoFragment extends Fragment {
 
         tvData = view.findViewById(R.id.tvData);
         tvValorTotal = view.findViewById(R.id.tvValorTotal);
-        tvIdUser = view.findViewById(R.id.tvIdUser);
+        tvEstado = view.findViewById(R.id.tvEstado);
 
         carregarCarrinho();
         return view;
     }
 
     private void carregarCarrinho() {
-//        ArrayList<Carrinho> carrinhos = SingletonGestorApp.getInstance(getContext()).getCarrinhosBD();
-//
-//        if (carrinhos.size() > 0) {
-//            Carrinho carrinho = carrinhos.get(0);
-//            tvData.setText(carrinho.getData());
-//            tvValorTotal.setText(carrinho.getValorTotal() + "");
-//            tvIdUser.setText(carrinho.getUsers_id() + "");
-//        }
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("DADOS_USER", Context.MODE_PRIVATE);
+        int userId = sharedPreferences.getInt("ID_USER", 0);
+
+        ArrayList<Carrinho> carrinhos;
+
+        carrinhos = SingletonGestorApp.getInstance(getContext()).getCarrinhosFinalizadosoAPI(userId, getContext());
+
+        if (carrinhos!=null) {
+            Carrinho carrinho = carrinhos.get(0);
+            tvData.setText(carrinho.getData());
+            tvValorTotal.setText(String.valueOf(carrinho.getValorTotal()));
+            tvEstado.setText(carrinho.getEstado());
+        }
     }
 }

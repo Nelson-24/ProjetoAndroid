@@ -23,6 +23,20 @@
                 android:layout_height="400dp"
                 android:layout_weight="0.5"
                 android:src="@drawable/logocrm" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp">
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textStyle="bold"
+                    android:textSize="25sp"
+                    android:textAlignment="center"
+                    android:text="@string/dados_do_artigo" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -34,7 +48,7 @@
                         android:layout_height="wrap_content"
                         android:textStyle="bold"
                         android:textSize="18sp"
-                        android:text="Referência: " />
+                        android:text="@string/refer_ncia" />
                     <EditText
                         android:id="@+id/etReferencia"
                         android:layout_width="match_parent"
@@ -54,7 +68,7 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:textSize="18sp"
-                    android:text="Descrição: " />
+                    android:text="@string/descri_o" />
                 <EditText
                     android:id="@+id/etDescricao"
                     android:layout_width="match_parent"
@@ -74,7 +88,7 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:textSize="18sp"
-                    android:text="Preço: " />
+                    android:text="@string/pre_o" />
                 <EditText
                     android:id="@+id/etPreco"
                     android:layout_width="match_parent"
@@ -94,7 +108,7 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:textSize="18sp"
-                    android:text="Stock: " />
+                    android:text="@string/stock_" />
                 <EditText
                     android:id="@+id/etStock"
                     android:layout_width="match_parent"
@@ -114,7 +128,7 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:textSize="18sp"
-                    android:text="Id Caregoria: " />
+                    android:text="@string/categoria" />
                 <EditText
                     android:id="@+id/etCategoria"
                     android:layout_width="match_parent"
@@ -134,7 +148,7 @@
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:textSize="18sp"
-                    android:text="Id Iva: " />
+                    android:text="@string/iva" />
                 <EditText
                     android:id="@+id/etIva"
                     android:layout_width="match_parent"
@@ -145,6 +159,7 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabGuardar"

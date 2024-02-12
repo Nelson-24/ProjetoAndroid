@@ -3,9 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/itemRemover"
-        android:title="@string/remover"
-        android:icon="@drawable/ic_action_remover"
+        android:id="@+id/itemCarrinho"
+        android:title="@string/adicionar_ao_carrinho"
+        android:icon="@drawable/ic_action_adicionar_carrinho"
         android:iconTint="@color/white"
         app:showAsAction="always"
         tools:ignore="UnusedAttribute" />

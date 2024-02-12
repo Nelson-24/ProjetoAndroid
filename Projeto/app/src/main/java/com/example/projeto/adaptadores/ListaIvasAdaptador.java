@@ -55,6 +55,7 @@ public class ListaIvasAdaptador extends BaseAdapter {
         return convertView;
     }
 
+
     private class ViewHolderLista {
         private TextView tvDescricao, tvPercentagem;
 

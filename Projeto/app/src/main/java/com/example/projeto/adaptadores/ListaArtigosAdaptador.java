@@ -1,6 +1,7 @@
 package com.example.projeto.adaptadores;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,16 +62,26 @@ public class ListaArtigosAdaptador extends BaseAdapter{
 
     private class ViewHolderLista{
         private TextView tvReferencia, tvPreco, tvDescricao;
+        private ImageView imgImagem;
         public ViewHolderLista(View view) {
             tvReferencia =view.findViewById(R.id.tvReferencia);
             tvPreco =view.findViewById(R.id.tvPreco);
             tvDescricao =view.findViewById(R.id.tvDescricao);
+            imgImagem =view.findViewById(R.id.imgImagem);
         }
 
         public void update(Artigo artigo){
+            SharedPreferences sharedPreferences = context.getSharedPreferences("DADOS_LINK", Context.MODE_PRIVATE);
+            String link = sharedPreferences.getString("LINK_INICIAL", "link");
             tvReferencia.setText(artigo.getReferencia()+"");
             tvPreco.setText(artigo.getPreco()+"");
             tvDescricao.setText(artigo.getDescricao());
+            Glide.with(context)
+                    .load("http://"+link+"/images/materiais/"+artigo.getImagem())
+                    .placeholder(R.drawable.logocrm)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(imgImagem);
+
         }
     }
 }

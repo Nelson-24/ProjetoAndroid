@@ -1,12 +1,11 @@
 package com.example.projeto.modelo;
 
-
 public class Carrinho {
-    private int id, users_id;
-    private float valorTotal, valor, valorIva;
-    private String data, estado, opcaoEntrega;
+    private int id, opcaoEntrega, users_id;
+    private double valorTotal, valor, valorIva;
+    private String data, estado;
 
-    public Carrinho(int id, String data, float valorTotal, String estado, String opcaoEntrega, float valor, float valorIva, int users_id) {
+    public Carrinho(int id, String data, double valorTotal, String estado, int opcaoEntrega, double valor, double valorIva, int users_id) {
         this.id = id;
         this.data = data;
         this.valorTotal = valorTotal;
@@ -31,10 +30,10 @@ public class Carrinho {
         this.data = data;
     }
 
-    public float getValorTotal(){
+    public double getValorTotal(){
         return valorTotal;
     }
-    public void setValorTotal(float valorTotal) {
+    public void setValorTotal(double valorTotal) {
         this.valorTotal = valorTotal;
     }
 
@@ -45,24 +44,24 @@ public class Carrinho {
         this.estado = estado;
     }
 
-    public String getOpcaoEntrega() {
+    public int getOpcaoEntrega() {
         return opcaoEntrega;
     }
-    public void setOpcaoEntrega(String opcaoEntrega) {
+    public void setOpcaoEntrega(int opcaoEntrega) {
         this.opcaoEntrega = opcaoEntrega;
     }
 
-    public float getValor() {
+    public double getValor() {
         return valor;
     }
-    public void setValor(int valor) {
+    public void setValor(double valor) {
         this.valor = valor;
     }
 
-    public float getValorIva() {
+    public double getValorIva() {
         return valorIva;
     }
-    public void setValorIva(int valorIva) {
+    public void setValorIva(double valorIva) {
         this.valorIva = valorIva;
     }
 

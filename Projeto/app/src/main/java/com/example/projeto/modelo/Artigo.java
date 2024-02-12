@@ -1,5 +1,8 @@
 package com.example.projeto.modelo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Artigo {
     private int id, stock, categoria_id, ivas_id;
     private float preco;
@@ -72,4 +75,5 @@ public class Artigo {
     public void setImagem(String imagem) {
         this.imagem = imagem;
     }
+
 }

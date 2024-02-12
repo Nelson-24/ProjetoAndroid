@@ -20,19 +20,21 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.projeto.adaptadores.ListaArtigosAdaptador;
-import com.example.projeto.listeners.ArtigosListener;
-import com.example.projeto.modelo.Artigo;
+import com.example.projeto.adaptadores.ListaCarrinhosAdaptador;
+import com.example.projeto.listeners.CarrinhosListener;
+import com.example.projeto.modelo.Carrinho;
 import com.example.projeto.modelo.SingletonGestorApp;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
-public class ListaCarrinhoFragment extends Fragment implements ArtigosListener{
+public class ListaCarrinhoFragment extends Fragment implements CarrinhosListener {
 
     private ListView lvLista;
-    private FloatingActionButton fabLista;
     private SearchView searchView;
+    private ListaCarrinhosAdaptador carrinhosAdaptador;
+    private int userId;
+    private FloatingActionButton fabLista;
 
     public ListaCarrinhoFragment() {
     }
@@ -42,52 +44,43 @@ public class ListaCarrinhoFragment extends Fragment implements ArtigosListener{
         View view = inflater.inflate(R.layout.fragment_lista, container, false);
         setHasOptionsMenu(true);
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("DADOS_USER", Context.MODE_PRIVATE);
-        String role = sharedPreferences.getString("ROLE", "");
+        int userId = sharedPreferences.getInt("USER_ID", 0);
 
-        lvLista=view.findViewById(R.id.lvLista);
+        lvLista = view.findViewById(R.id.lvLista);
+        carrinhosAdaptador = new ListaCarrinhosAdaptador(getContext(), new ArrayList<>());
+        lvLista.setAdapter(carrinhosAdaptador);
+        fabLista = view.findViewById(R.id.fabLista);
+        fabLista.setVisibility(View.GONE);
+
         lvLista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Intent intent=new Intent(getContext(), DetalhesArtigoActivity.class);
-                intent.putExtra(DetalhesArtigoActivity.ID_ARTIGO, (int)id);
-                startActivityForResult(intent, MainActivity.EDIT);
+                Intent intent = new Intent(getContext(), DetalhesCarrinhoActivity.class);
+                intent.putExtra(DetalhesCarrinhoActivity.ID_CARRINHO, (int) id);
+                startActivityForResult(intent, MainActivity.ADD);
             }
         });
-        fabLista=view.findViewById(R.id.fabLista);
-        if ("cliente".equals(role)) {
-            fabLista.setVisibility(View.GONE);
-        } else {
-            fabLista.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(getContext(), DetalhesArtigoActivity.class);
-                    startActivityForResult(intent, MainActivity.ADD);
-                }
-            });
-        }
-        SingletonGestorApp.getInstance(getContext()).setArtigosListener(this);
-        SingletonGestorApp.getInstance(getContext()).getAllArtigosAPI(getContext());
+
+
+        SingletonGestorApp.getInstance(getContext()).setCarrinhosListener(this);
+        SingletonGestorApp.getInstance(getContext()).getCarrinhosFinalizadosoAPI(userId, getContext());
+
         return view;
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-        if (resultCode== Activity.RESULT_OK){
-            if (requestCode==MainActivity.ADD || requestCode==MainActivity.EDIT){
-                SingletonGestorApp.getInstance(getContext()).getAllArtigosAPI(getContext());
-                if (requestCode==MainActivity.ADD)
-                    Toast.makeText(getContext(),"Artigo adicionado com sucesso", Toast.LENGTH_LONG).show();
-                else
-                    Toast.makeText(getContext(),"Artigo editado com sucesso", Toast.LENGTH_LONG).show();
-            }
+        if (resultCode == Activity.RESULT_OK) {
+            SingletonGestorApp.getInstance(getContext()).getCarrinhosFinalizadosoAPI(userId, getContext());
         }
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_pesquisa,menu);
-        MenuItem itemPesquisa= menu.findItem(R.id.itemPesquisa);
-        searchView= (SearchView) itemPesquisa.getActionView();
+        inflater.inflate(R.menu.menu_pesquisa, menu);
+        MenuItem itemPesquisa = menu.findItem(R.id.itemPesquisa);
+        searchView = (SearchView) itemPesquisa.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String newText) {
@@ -96,11 +89,11 @@ public class ListaCarrinhoFragment extends Fragment implements ArtigosListener{
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                ArrayList<Artigo> tempListaArtigo=new ArrayList<>();
-                for (Artigo a: SingletonGestorApp.getInstance(getContext()).getArtigosBD())
-                    if (a.getDescricao().toLowerCase().contains(newText.toLowerCase()) || a.getReferencia().toLowerCase().contains(newText.toLowerCase()))
-                        tempListaArtigo.add(a);
-                lvLista.setAdapter(new ListaArtigosAdaptador(getContext(),tempListaArtigo));
+                ArrayList<Carrinho> tempListaCarrinho = new ArrayList<>();
+                for (Carrinho c : SingletonGestorApp.getInstance(getContext()).getCarrinhosFinalizadosoAPI(userId, getContext()))
+                    if (c.getData().toLowerCase().contains(newText.toLowerCase()))
+                        tempListaCarrinho.add(c);
+                lvLista.setAdapter(new ListaCarrinhosAdaptador(getContext(), tempListaCarrinho));
                 return false;
             }
         });
@@ -109,8 +102,10 @@ public class ListaCarrinhoFragment extends Fragment implements ArtigosListener{
     }
 
     @Override
-    public void onRefreshListaArtigos(ArrayList<Artigo> listaArtigos) {
-        if (listaArtigos!=null)
-            lvLista.setAdapter(new ListaArtigosAdaptador(getContext(),listaArtigos));
+    public void onRefreshListaCarrinhos(ArrayList<Carrinho> listaCarrinhos) {
+        if (listaCarrinhos != null && getContext() != null) {
+            carrinhosAdaptador = new ListaCarrinhosAdaptador(getContext(), listaCarrinhos);
+            lvLista.setAdapter(carrinhosAdaptador);
+        }
     }
 }

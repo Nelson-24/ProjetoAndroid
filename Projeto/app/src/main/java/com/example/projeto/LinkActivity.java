@@ -25,6 +25,7 @@ public class LinkActivity extends AppCompatActivity {
         SingletonGestorApp.getInstance(getApplicationContext());
         sharedPreferences = getSharedPreferences("DADOS_LINK", Context.MODE_PRIVATE);
         etLink=findViewById(R.id.etLink);
+        etLink.setText(sharedPreferences.getString("LINK_INICIAL", ""));
     }
 
     public void onClickEnviar(View view) {
